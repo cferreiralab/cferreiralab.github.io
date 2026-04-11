@@ -1,57 +1,124 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>CFerreiraLab - Simulations</title>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<meta charset="UTF-8">
+<title>CFerreiraLab</title>
+
+<style>
+
+body {
+    margin: 0;
+    font-family: Arial;
+    display: flex;
+}
+
+/* MENU GAUCHE */
+.sidebar {
+    width: 220px;
+    background: #2c3e50;
+    color: white;
+    height: 100vh;
+    padding: 20px;
+}
+
+.sidebar h2 {
+    text-align: center;
+}
+
+.sidebar a {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+.sidebar a:hover {
+    background: #34495e;
+}
+
+/* CONTENU */
+.content {
+    flex: 1;
+    padding: 20px;
+    background: #f4f6f8;
+}
+
+/* CARTES (étiquettes comme PhET) */
+.card {
+    display: inline-block;
+    background: white;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    width: 200px;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+</style>
 </head>
 
-<body style="font-family: Arial; text-align: center; background: #f4f6f8;">
+<body>
 
-<h1>🔬 CFerreiraLab</h1>
-<h2>Simulation de titrage (modèle simplifié)</h2>
+<!-- MENU -->
+<div class="sidebar">
+    <h2>🔬 CFerreiraLab</h2>
 
-<p>Volume équivalent (mL) :</p>
+    <a onclick="show('titrage')">Titrage</a>
+    <a onclick="show('spectro')">Spectro</a>
+    <a onclick="show('maths')">Maths</a>
+</div>
 
-<input type="range" id="slider" min="5" max="20" value="10" step="0.5">
-<span id="val">10</span>
+<!-- CONTENU -->
+<div class="content" id="content">
 
-<div id="graph" style="width:80%; margin:auto;"></div>
+</div>
 
 <script>
 
-const slider = document.getElementById("slider");
-const val = document.getElementById("val");
+function show(section) {
 
-slider.oninput = function() {
-    val.innerHTML = this.value;
-    updateGraph();
-};
+    let html = "";
 
-function updateGraph() {
+    if(section === "titrage") {
+        html = `
+        <h2>Titrage</h2>
 
-    let x = [];
-    let y = [];
-    let veq = parseFloat(slider.value);
-
-    for (let v = 0; v <= 25; v += 0.2) {
-        x.push(v);
-        y.push(200 + 300 / (1 + Math.exp(-(v - veq))));
+        <div class="card">Simulation simple</div>
+        <div class="card">Dosage Fe²⁺</div>
+        <div class="card">Courbe dérivée</div>
+        `;
     }
 
-    Plotly.newPlot('graph', [{
-        x: x,
-        y: y,
-        mode: 'lines',
-        name: "Courbe de titrage"
-    }], {
-        title: "Simulation interactive",
-        xaxis: {title: "Volume ajouté (mL)"},
-        yaxis: {title: "Potentiel (mV)"}
-    });
+    if(section === "spectro") {
+        html = `
+        <h2>Spectrophotométrie</h2>
+
+        <div class="card">Loi de Beer-Lambert</div>
+        <div class="card">Courbe d'étalonnage</div>
+        `;
+    }
+
+    if(section === "maths") {
+        html = `
+        <h2>Maths</h2>
+
+        <div class="card">Fonction exponentielle</div>
+        <div class="card">Dérivée</div>
+        `;
+    }
+
+    document.getElementById("content").innerHTML = html;
 }
 
-updateGraph();
+// affichage par défaut
+show("titrage");
 
 </script>
 
