@@ -15,7 +15,6 @@
 body {
     margin: 0;              /* enlève les marges par défaut */
     font-family: Arial;     /* police du site */
-    display: flex;          /* permet de mettre menu + contenu côte à côte */
 }
 
 /* =========================
@@ -125,18 +124,19 @@ body {
      MENU + CONTENU
 ========================= -->
 
-<!-- MENU -->
-<div class="sidebar">
-    <h2>🔬 CFerreiraLab</h2>
+<div style="display:flex;">
 
-    <!-- onclick appelle une fonction JavaScript -->
-    <a onclick="show('titrage')">Titrage</a>
-    <a onclick="show('spectro')">Spectro</a>
-    <a onclick="show('maths')">Maths</a>
-</div>
+    <div class="sidebar">
+        <h2>🔬 CFerreiraLab</h2>
 
-<!-- CONTENU DYNAMIQUE -->
-<div class="content" id="content">
+        <a onclick="show('titrage')">Titrage</a>
+        <a onclick="show('spectro')">Spectro</a>
+        <a onclick="show('maths')">Maths</a>
+    </div>
+
+    <div class="content" id="content">
+    </div>
+
 </div>
 
 <!-- =========================
