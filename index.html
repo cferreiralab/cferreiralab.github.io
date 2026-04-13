@@ -85,8 +85,23 @@ function show(section) {
     let html = "";
 
     if(section === "accueil") {
-        html = "<h2>Bienvenue</h2><div class='card'>Titrage</div><div class='card'>Spectro</div>";
-    }
+    html = `
+    <h2>Bienvenue</h2>
+
+    <p>
+    Ce site propose des simulations interactives en mathématiques,
+    physique et chimie.
+    </p>
+
+    <p style="color:#777; font-size:14px;">
+    BTS • IUT • Lycée professionnel
+    </p>
+
+    <p>
+    Sélectionnez une catégorie dans le menu de gauche.
+    </p>
+    `;
+}
 
     if(section === "titrage") {
         html = "<h2>Titrage</h2><div class='card'>Simulation</div>";
