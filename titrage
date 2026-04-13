@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Titrage</title>
+</head>
+
+<body>
+
+<h1>Simulation de titrage</h1>
+
+<p>Ici tu pourras mettre ta simulation interactive.</p>
+
+<br>
+
+<a href="index.html">⬅ Retour</a>
+
+</body>
+</html>
