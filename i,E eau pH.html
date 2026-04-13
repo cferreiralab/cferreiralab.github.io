@@ -187,12 +187,16 @@ for (let i = 0; i < E.length; i++) {
     ];
 
     let layout = {
-        title: "pH = " + pH.toFixed(1),
+        title: "",
         xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
         yaxis: {title: "Courant (mA)", range: [-100, 100]},
         shapes: shapes,
         showlegend: true,
-        legend: {x: 0.02, y: 0.98},
+        legend: {
+            x: 0.02,
+            y: 0.02,
+            bgcolor: "rgba(255,255,255,0.8)"
+        },
         annotations: [
             {
                 x: -1.45,
@@ -201,7 +205,7 @@ for (let i = 0; i < E.length; i++) {
                 align: 'left',
                 text:
                     "pH = " + pH.toFixed(1) + "<br>" +
-                    "E° H₂/H⁺ = 0.00 V<br>" +
+                    "E° (<sub>H<sub>2</sub>/H<sup>+</sup></sub>) = 0.00 V<br>" +
                     "E° O₂/H₂O = 1.23 V<br>" +
                     "ηc = " + eta_c.toFixed(2) + " V<br>" +
                     "ηa = " + eta_a.toFixed(2) + " V",
