@@ -103,129 +103,147 @@ for (let i = 0; i < E.length; i++) {
 // =========================
 function updateGraph(pH) {
 
-   console.log("updateGraph appelé");  // ← ICI
+    console.log("updateGraph appelé");
 
     ph_display.innerText = pH.toFixed(1);
 
-    function compute(pH) {
+    let data = compute(pH);
 
     let E_H2 = -0.059 * pH;
     let E_O2 = 1.23 - 0.059 * pH;
 
-    let E_H2_reel = E_H2 - eta_c;
-    let E_O2_reel = E_O2 + eta_a;
-
-    let i_cath = [];
-    let i_anod = [];
-
     // =========================
-    // COURBES RÉELLES
+    // TRACES
     // =========================
-    for (let i = 0; i < E.length; i++) {
-
-        let e = E[i];
-
-        if (e < E_H2_reel) {
-            let i_raw = -i0 * (Math.exp(-k * (e - E_H2_reel)) - 1);
-            i_cath.push(i_lim_c * Math.tanh(i_raw / i_lim_c) * 1000);
-        } else {
-            i_cath.push(0);
-        }
-
-        if (e > E_O2_reel) {
-            let i_raw = i0 * (Math.exp(k * (e - E_O2_reel)) - 1);
-            i_anod.push(i_lim_a * Math.tanh(i_raw / i_lim_a) * 1000);
-        } else {
-            i_anod.push(0);
-        }
-    }
-
-    // =========================
-    // NERNST (CORRIGÉ)
-    // =========================
-    let i_cath_N = [];
-    let i_anod_N = [];
-
-    for (let i = 0; i < E.length; i++) {
-
-        let e = E[i];
-
-        if (e < E_H2) {
-            let i_raw = -i0 * (Math.exp(-k * (e - E_H2)) - 1);
-            i_cath_N.push(i_raw * 1000);
-        } else {
-            i_cath_N.push(0);
-        }
-
-        if (e > E_O2) {
-            let i_raw = i0 * (Math.exp(k * (e - E_O2)) - 1);
-            i_anod_N.push(i_raw * 1000);
-        } else {
-            i_anod_N.push(0);
-        }
-    }
-
-    return {
-        E_H2_reel,
-        E_O2_reel,
-        i_cath,
-        i_anod,
-        i_cath_N,
-        i_anod_N
+    let trace1 = {
+        x: E,
+        y: data.i_cath,
+        mode: 'lines',
+        name: 'Réduction H+ → H2'
     };
-}
 
-    let layout = {
-    title: "pH = " + pH.toFixed(1),
+    let trace2 = {
+        x: E,
+        y: data.i_anod,
+        mode: 'lines',
+        name: 'Oxydation H2O → O2'
+    };
 
-    xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
-    yaxis: {title: "Courant (mA)", range: [-100, 100]},
+    let trace3 = {
+        x: E,
+        y: data.i_cath_N,
+        mode: 'lines',
+        name: 'H⁺/H₂ (Nernst)',
+        line: {dash: 'dot'}
+    };
 
-    shapes: shapes,
+    let trace4 = {
+        x: E,
+        y: data.i_anod_N,
+        mode: 'lines',
+        name: 'H₂O/O₂ (Nernst)',
+        line: {dash: 'dot'}
+    };
 
-    annotations: [
+    // =========================
+    // SHAPES
+    // =========================
+    let shapes = [
 
-        // 🔹 encadré info (équivalent Python)
+        // zone stabilité
         {
-            x: -1.45,
-            y: 95,
-            xref: 'x',
-            yref: 'y',
-            align: 'left',
-            showarrow: false,
-            text:
-                "pH = " + pH.toFixed(1) + "<br>" +
-                "E° H₂/H⁺ = 0.00 V<br>" +
-                "E° O₂/H₂O = 1.23 V<br>" +
-                "ηc = " + eta_c.toFixed(2) + " V<br>" +
-                "ηa = " + eta_a.toFixed(2) + " V",
-            bordercolor: "#888",
-            borderwidth: 1,
-            bgcolor: "white"
+            type: 'rect',
+            x0: data.E_H2_reel,
+            x1: data.E_O2_reel,
+            y0: -100,
+            y1: 100,
+            fillcolor: 'green',
+            opacity: 0.15,
+            line: {width: 0}
         },
 
-        // 🔹 annotation H2
+        // lignes
         {
-            x: data.E_H2_reel - 0.1,
-            y: -10,
-            text: "H₂ ← H⁺",
-            showarrow: false
+            type: 'line',
+            x0: data.E_H2_reel,
+            x1: data.E_H2_reel,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dash'}
         },
-
-        // 🔹 annotation O2
         {
-            x: data.E_O2_reel + 0.05,
-            y: 10,
-            text: "H₂O → O₂",
-            showarrow: false
+            type: 'line',
+            x0: data.E_O2_reel,
+            x1: data.E_O2_reel,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dash'}
+        },
+        {
+            type: 'line',
+            x0: E_H2,
+            x1: E_H2,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dot'}
+        },
+        {
+            type: 'line',
+            x0: E_O2,
+            x1: E_O2,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dot'}
         }
+    ];
+
+    // =========================
+    // LAYOUT
+    // =========================
+    let layout = {
+        title: "pH = " + pH.toFixed(1),
+
+        xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
+        yaxis: {title: "Courant (mA)", range: [-100, 100]},
+
+        shapes: shapes,
+
         showlegend: true,
         legend: {
-        x: 0.02,
-        y: 0.98
+            x: 0.02,
+            y: 0.98
         },
-    ]
-};
+
+        annotations: [
+            {
+                x: -1.45,
+                y: 95,
+                showarrow: false,
+                align: 'left',
+                text:
+                    "pH = " + pH.toFixed(1) + "<br>" +
+                    "E° H₂/H⁺ = 0.00 V<br>" +
+                    "E° O₂/H₂O = 1.23 V<br>" +
+                    "ηc = " + eta_c.toFixed(2) + " V<br>" +
+                    "ηa = " + eta_a.toFixed(2) + " V",
+                bordercolor: "#888",
+                borderwidth: 1,
+                bgcolor: "white"
+            },
+            {
+                x: data.E_H2_reel - 0.1,
+                y: -10,
+                text: "H₂ ← H⁺",
+                showarrow: false
+            },
+            {
+                x: data.E_O2_reel + 0.05,
+                y: 10,
+                text: "H₂O → O₂",
+                showarrow: false
+            }
+        ]
+    };
 
     Plotly.newPlot('graph', [trace1, trace2, trace3, trace4], layout);
 }
