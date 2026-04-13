@@ -113,18 +113,21 @@ function show(section) {
     `;
 }
 
-    if(section === "titrage") {
-    html = `
-    <h2>titrage</h2>
-
-    <div class='card' onclick="window.location.href='titrage.html'">
-        <strong>Simulation simple</strong><br>
-        <span style="font-size:13px; color:#666;">
-            Courbe de titrage
-        </span>
-    </div>
-    `;
+    if(section === "simulation_titrage") {
+    fetch("titrage.html")
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("content").innerHTML = data;
+        });
 }
+
+    <div class='card' onclick="show('simulation_titrage')">
+    <strong>Simulation simple</strong><br>
+    <span style="font-size:13px; color:#666;">
+        Courbe de titrage
+    </span>
+    </div>
+
 
     if(section === "spectro") {
         html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
