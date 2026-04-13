@@ -7,8 +7,6 @@
 
 <br>
 
-<button onclick="toggle()">▶ / ⏸</button>
-<button onclick="reset()">↻ Reset</button>
 <button onclick="show('titrage')">⬅ Retour</button>
 
 <script>
@@ -27,12 +25,6 @@ let i0 = 1e-3;
 
 let i_lim_c = -5e-1;
 let i_lim_a = 5e-1;
-
-let pH_values = [];
-for (let i = 0; i <= 12; i += 0.1) pH_values.push(i);
-
-let frame = 0;
-let running = false;
 
 let slider = document.getElementById("ph_slider");
 let ph_display = document.getElementById("ph_val");
@@ -82,6 +74,10 @@ function updateGraph(pH) {
 
     let data = compute(pH);
 
+    // 🔹 NERNST
+    let E_H2 = -0.059 * pH;
+    let E_O2 = 1.23 - 0.059 * pH;
+
     let trace1 = {
         x: E,
         y: data.i_cath,
@@ -96,22 +92,67 @@ function updateGraph(pH) {
         name: 'Oxydation H2O → O2'
     };
 
+    // 🔹 courbes Nernst (verticales en pointillé)
+    let shapes = [
+
+        // zone stabilité
+        {
+            type: 'rect',
+            x0: data.E_H2_reel,
+            x1: data.E_O2_reel,
+            y0: -100,
+            y1: 100,
+            fillcolor: 'green',
+            opacity: 0.15,
+            line: {width: 0}
+        },
+
+        // H2 réel
+        {
+            type: 'line',
+            x0: data.E_H2_reel,
+            x1: data.E_H2_reel,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dash', width: 1}
+        },
+
+        // O2 réel
+        {
+            type: 'line',
+            x0: data.E_O2_reel,
+            x1: data.E_O2_reel,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dash', width: 1}
+        },
+
+        // H2 Nernst
+        {
+            type: 'line',
+            x0: E_H2,
+            x1: E_H2,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dot', width: 1}
+        },
+
+        // O2 Nernst
+        {
+            type: 'line',
+            x0: E_O2,
+            x1: E_O2,
+            y0: -100,
+            y1: 100,
+            line: {dash: 'dot', width: 1}
+        }
+    ];
+
     let layout = {
         title: "pH = " + pH.toFixed(1),
         xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
         yaxis: {title: "Courant (mA)", range: [-100, 100]},
-        shapes: [
-            {
-                type: 'rect',
-                x0: data.E_H2_reel,
-                x1: data.E_O2_reel,
-                y0: -100,
-                y1: 100,
-                fillcolor: 'green',
-                opacity: 0.15,
-                line: {width: 0}
-            }
-        ]
+        shapes: shapes
     };
 
     Plotly.newPlot('graph', [trace1, trace2], layout);
@@ -129,38 +170,13 @@ slider.addEventListener("input", function() {
 // =========================
 // ANIMATION
 // =========================
-function step() {
 
-    if (!running) return;
-
-    if (frame >= pH_values.length) {
-        running = false;
-        return;
-    }
-
-    let pH = pH_values[frame];
-
-    slider.value = pH;
-    updateGraph(pH);
-
-    frame++;
-}
-
-setInterval(step, 80);
 
 // =========================
 // CONTROLES
 // =========================
-function toggle() {
-    running = !running;
-}
 
-function reset() {
-    running = false;
-    frame = 0;
-    slider.value = 0;
-    updateGraph(0);
-}
+
 
 // =========================
 // INIT
