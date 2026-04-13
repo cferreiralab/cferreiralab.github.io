@@ -253,7 +253,6 @@ function updateGraph(pH) {
 // =========================
 slider.addEventListener("input", function() {
     let pH = parseFloat(this.value);
-    frame = Math.round(pH * 10);
     updateGraph(pH);
 });
 
