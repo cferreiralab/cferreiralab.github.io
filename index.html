@@ -38,16 +38,26 @@ body {
 .content {
     flex: 1;
     padding: 20px;
+    text-align: center;
 }
 
 /* CARTES */
 .card {
     display: inline-block;
-    background: white;
-    padding: 10px;
+    width: 220px;
+    padding: 15px;
     margin: 10px;
+    background: white;
     border-radius: 8px;
-    box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+/* effet au survol */
+.card:hover {
+    background: #f0f0f0;
 }
 </style>
 </head>
@@ -64,6 +74,13 @@ body {
 
 <div class="container">
 
+<div class='card'>
+    <strong>Simulation simple</strong><br>
+    <span style="font-size:13px; color:#666;">
+        Courbe de titrage
+    </span>
+</div>
+    
     <!-- MENU -->
     <div class="sidebar">
         <a onclick="show('accueil')">Accueil</a>
