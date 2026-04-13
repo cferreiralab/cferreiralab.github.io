@@ -104,13 +104,18 @@ for (let i = 0; i < E.length; i++) {
 
     function updateGraph(pH) {
 
+    // Affichage pH
     ph_display.innerText = pH.toFixed(1);
 
+    // Calcul des données
     let data = compute(pH);
 
     let E_H2 = -0.059 * pH;
     let E_O2 = 1.23 - 0.059 * pH;
 
+    // =========================
+    // TRACES
+    // =========================
     let trace1 = {
         x: E,
         y: data.i_cath,
@@ -129,7 +134,7 @@ for (let i = 0; i < E.length; i++) {
         x: E,
         y: data.i_cath_N,
         mode: 'lines',
-        name: 'H⁺/H₂ (Nernst)',
+        name: 'H+/H2 (Nernst)',
         line: {dash: 'dot'}
     };
 
@@ -137,11 +142,16 @@ for (let i = 0; i < E.length; i++) {
         x: E,
         y: data.i_anod_N,
         mode: 'lines',
-        name: 'H₂O/O₂ (Nernst)',
+        name: 'H2O/O2 (Nernst)',
         line: {dash: 'dot'}
     };
 
+    // =========================
+    // SHAPES
+    // =========================
     let shapes = [
+
+        // zone stabilité
         {
             type: 'rect',
             x0: data.E_H2_reel,
@@ -152,6 +162,8 @@ for (let i = 0; i < E.length; i++) {
             opacity: 0.15,
             line: {width: 0}
         },
+
+        // lignes réelles
         {
             type: 'line',
             x0: data.E_H2_reel,
@@ -168,6 +180,8 @@ for (let i = 0; i < E.length; i++) {
             y1: 100,
             line: {dash: 'dash'}
         },
+
+        // lignes Nernst
         {
             type: 'line',
             x0: E_H2,
@@ -186,17 +200,22 @@ for (let i = 0; i < E.length; i++) {
         }
     ];
 
+    // =========================
+    // LAYOUT
+    // =========================
     let layout = {
         title: "",
         xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
         yaxis: {title: "Courant (mA)", range: [-100, 100]},
         shapes: shapes,
+
         showlegend: true,
         legend: {
             x: 0.02,
             y: 0.02,
             bgcolor: "rgba(255,255,255,0.8)"
         },
+
         annotations: [
             {
                 x: -1.45,
@@ -206,7 +225,7 @@ for (let i = 0; i < E.length; i++) {
                 text:
                     "pH = " + pH.toFixed(1) + "<br>" +
                     "E° (<sub>H<sub>2</sub>/H<sup>+</sup></sub>) = 0.00 V<br>" +
-                    "E° O₂/H₂O = 1.23 V<br>" +
+                    "E° (<sub>O<sub>2</sub>/H<sub>2</sub>O</sub>) = 1.23 V<br>" +
                     "ηc = " + eta_c.toFixed(2) + " V<br>" +
                     "ηa = " + eta_a.toFixed(2) + " V",
                 bordercolor: "#888",
@@ -228,7 +247,10 @@ for (let i = 0; i < E.length; i++) {
         ]
     };
 
-        Plotly.newPlot('graph', [trace1, trace2, trace3, trace4], layout);
+    // =========================
+    // AFFICHAGE
+    // =========================
+    Plotly.newPlot('graph', [trace1, trace2, trace3, trace4], layout);
 }
 
 // =========================
