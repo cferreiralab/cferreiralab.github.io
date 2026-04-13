@@ -95,39 +95,45 @@ function show(section) {
     let html = "";
 
     if(section === "accueil") {
-    html = `
-    <h2>Bienvenue</h2>
+        html = `
+        <h2>Bienvenue</h2>
 
-    <p>
-    Ce site propose des simulations interactives en mathématiques,
-    physique et chimie.
-    </p>
+        <p>
+        Ce site propose des simulations interactives en mathématiques,
+        physique et chimie.
+        </p>
 
-    <p style="color:#777; font-size:14px;">
-    BTS • IUT • Lycée professionnel
-    </p>
+        <p style="color:#777; font-size:14px;">
+        BTS • IUT • Lycée professionnel
+        </p>
 
-    <p>
-    Sélectionnez une catégorie dans le menu de gauche.
-    </p>
-    `;
-}
+        <p>
+        Sélectionnez une catégorie dans le menu de gauche.
+        </p>
+        `;
+    }
+
+    if(section === "titrage") {
+        html = `
+        <h2>Titrage</h2>
+
+        <div class='card' onclick="show('simulation_titrage')">
+            <strong>Simulation simple</strong><br>
+            <span style="font-size:13px; color:#666;">
+                Courbe de titrage
+            </span>
+        </div>
+        `;
+    }
 
     if(section === "simulation_titrage") {
-    fetch("titrage.html")
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById("content").innerHTML = data;
-        });
-}
-
-    <div class='card' onclick="show('simulation_titrage')">
-    <strong>Simulation simple</strong><br>
-    <span style="font-size:13px; color:#666;">
-        Courbe de titrage
-    </span>
-    </div>
-
+        fetch("titrage.html")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("content").innerHTML = data;
+            });
+        return; // ⚠️ IMPORTANT (empêche le reste du code de s'exécuter)
+    }
 
     if(section === "spectro") {
         html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
@@ -139,7 +145,6 @@ function show(section) {
 
     document.getElementById("content").innerHTML = html;
 }
-
 show("accueil");
 
 </script>
