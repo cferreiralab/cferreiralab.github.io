@@ -1,134 +1,82 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
 <meta charset="UTF-8">
 <title>CFerreiraLab</title>
 
 <style>
-
-/* =========================
-   STRUCTURE GÉNÉRALE
-========================= */
-
-/* Le body contient tout le site */
 body {
-    margin: 0;              /* enlève les marges par défaut */
-    font-family: Arial;     /* police du site */
+    margin: 0;
+    font-family: Arial;
 }
 
-/* =========================
-   MENU LATÉRAL (GAUCHE)
-========================= */
-
+/* MENU */
 .sidebar {
-    width: 220px;           /* largeur du menu */
-    background: #2c3e50;    /* couleur de fond */
-    color: white;           /* couleur du texte */
-    height: 100vh;          /* prend toute la hauteur de l'écran */
-    padding: 20px;          /* espace intérieur */
+    width: 180px;
+    background: #2c3e50;
+    color: white;
+    height: 100vh;
+    padding: 15px;
 }
 
-/* Titre du menu */
-.sidebar h2 {
-    text-align: center;     /* centré */
-}
-
-/* Liens du menu */
 .sidebar a {
-    display: block;         /* chaque lien prend toute la ligne */
+    display: block;
     color: white;
     padding: 10px;
-    text-decoration: none;  /* enlève le soulignement */
-    margin: 5px 0;
-    border-radius: 5px;
+    text-decoration: none;
 }
 
-/* Effet au survol */
 .sidebar a:hover {
     background: #34495e;
 }
 
-/* =========================
-   ZONE CONTENU (DROITE)
-========================= */
+/* CONTENU */
+.container {
+    display: flex;
+}
 
 .content {
-    flex: 1;                /* prend tout l’espace restant */
+    flex: 1;
     padding: 20px;
-    background: #f4f6f8;
 }
 
-/* =========================
-   CARTES (simulations)
-========================= */
-
+/* CARTES */
 .card {
-    display: inline-block;  /* permet d’avoir plusieurs cartes côte à côte */
+    display: inline-block;
     background: white;
-    padding: 15px;
+    padding: 10px;
     margin: 10px;
-    border-radius: 10px;
-    width: 200px;
+    border-radius: 8px;
     box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
-    cursor: pointer;        /* curseur cliquable */
 }
-
-/* Effet zoom au survol */
-.card:hover {
-    transform: scale(1.05);
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- =========================
-     EN-TÊTE (BANDEAU + PHOTO)
-========================= -->
-
-<div style="
-    background:white;
-    border-bottom:2px solid #2c3e50;
-    padding:20px 30px;
-">
-
-    <h1 style="
-        margin:0;
-        color:#2c3e50;
-        font-weight:500;
-    ">
-        CFerreiraLab
-    </h1>
-
-    <p style="
-        margin:5px 0 0;
-        color:#555;
-        font-size:14px;
-    ">
-        Enseignement des mathématiques, de la physique et de la chimie – Simulations et prototypage
+<!-- HEADER -->
+<div style="padding:20px; border-bottom:2px solid #2c3e50;">
+    <h1 style="margin:0;">CFerreiraLab</h1>
+    <p style="margin:5px 0 0;">
+        Mathématiques, Physique et Chimie – Simulations et prototypage
     </p>
-
 </div>
 
-<!-- =========================
-     MENU + CONTENU
-========================= -->
+<div class="container">
 
-<div style="display:flex;">
+    <!-- MENU -->
+    <div class="sidebar">
+        <a onclick="show('accueil')">Accueil</a>
+        <a onclick="show('titrage')">Titrage</a>
+        <a onclick="show('spectro')">Spectro</a>
+        <a onclick="show('maths')">Maths</a>
+    </div>
 
-<div class="sidebar">
-      
-    <a onclick="show('accueil')">Accueil</a> 
-    <a onclick="show('titrage')">Titrage</a>
-    <a onclick="show('spectro')">Spectro</a>
-    <a onclick="show('maths')">Maths</a>
+    <!-- CONTENU -->
+    <div class="content" id="content">
+    </div>
+
 </div>
-
-<!-- =========================
-     SCRIPT JAVASCRIPT
-========================= -->
 
 <script>
 
@@ -137,11 +85,11 @@ function show(section) {
     let html = "";
 
     if(section === "accueil") {
-        html = "<h2>Bienvenue</h2><p>Choisissez une catégorie dans le menu.</p>";
+        html = "<h2>Bienvenue</h2><div class='card'>Titrage</div><div class='card'>Spectro</div>";
     }
 
     if(section === "titrage") {
-        html = "<h2>Titrage</h2><div class='card'>Simulation simple</div>";
+        html = "<h2>Titrage</h2><div class='card'>Simulation</div>";
     }
 
     if(section === "spectro") {
@@ -155,7 +103,6 @@ function show(section) {
     document.getElementById("content").innerHTML = html;
 }
 
-// affichage par défaut
 show("accueil");
 
 </script>
