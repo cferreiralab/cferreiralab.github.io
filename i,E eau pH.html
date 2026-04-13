@@ -61,8 +61,38 @@ function compute(pH) {
             i_anod.push(0);
         }
     }
+// =========================
+// NERNST (SANS SURTENSION)
+// =========================
+    for (let i = 0; i < E.length; i++) {
 
-    return {E_H2_reel, E_O2_reel, i_cath, i_anod};
+    let e = E[i];
+
+    // cathodique Nernst
+    if (e < E_H2) {
+        let i_raw = -i0 * (Math.exp(-k * (e - E_H2)) - 1);
+        i_cath_N.push(i_raw * 1000);
+    } else {
+        i_cath_N.push(0);
+    }
+
+    // anodique Nernst
+    if (e > E_O2) {
+        let i_raw = i0 * (Math.exp(k * (e - E_O2)) - 1);
+        i_anod_N.push(i_raw * 1000);
+    } else {
+        i_anod_N.push(0);
+    }
+}
+
+    return {
+        E_H2_reel,
+        E_O2_reel,
+        i_cath,
+        i_anod,
+        i_cath_N,
+        i_anod_N
+    };
 }
 
 // =========================
@@ -90,6 +120,24 @@ function updateGraph(pH) {
         y: data.i_anod,
         mode: 'lines',
         name: 'Oxydation H2O → O2'
+    };
+
+    // 🔹 NERNST cathodique
+    let trace3 = {
+        x: E,
+        y: data.i_cath_N,
+        mode: 'lines',
+        name: 'H⁺/H₂ (Nernst)',
+        line: {dash: 'dot'}
+    };
+
+    // 🔹 NERNST anodique
+    let trace4 = {
+        x: E,
+        y: data.i_anod_N,
+        mode: 'lines',
+        name: 'H₂O/O₂ (Nernst)',
+        line: {dash: 'dot'}
     };
 
     // 🔹 courbes Nernst (verticales en pointillé)
@@ -192,11 +240,15 @@ function updateGraph(pH) {
             text: "H₂O → O₂",
             showarrow: false
         }
-
+        showlegend: true,
+        legend: {
+        x: 0.02,
+        y: 0.98
+        },
     ]
 };
 
-    Plotly.newPlot('graph', [trace1, trace2], layout);
+    Plotly.newPlot('graph', [trace1, trace2, trace3, trace4], layout);
 }
 
 // =========================
