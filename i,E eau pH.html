@@ -101,9 +101,8 @@ for (let i = 0; i < E.length; i++) {
 // =========================
 // UPDATE GRAPH
 // =========================
-function updateGraph(pH) {
 
-    console.log("updateGraph appelé");
+    function updateGraph(pH) {
 
     ph_display.innerText = pH.toFixed(1);
 
@@ -112,9 +111,6 @@ function updateGraph(pH) {
     let E_H2 = -0.059 * pH;
     let E_O2 = 1.23 - 0.059 * pH;
 
-    // =========================
-    // TRACES
-    // =========================
     let trace1 = {
         x: E,
         y: data.i_cath,
@@ -145,12 +141,7 @@ function updateGraph(pH) {
         line: {dash: 'dot'}
     };
 
-    // =========================
-    // SHAPES
-    // =========================
     let shapes = [
-
-        // zone stabilité
         {
             type: 'rect',
             x0: data.E_H2_reel,
@@ -161,8 +152,6 @@ function updateGraph(pH) {
             opacity: 0.15,
             line: {width: 0}
         },
-
-        // lignes
         {
             type: 'line',
             x0: data.E_H2_reel,
@@ -197,23 +186,13 @@ function updateGraph(pH) {
         }
     ];
 
-    // =========================
-    // LAYOUT
-    // =========================
     let layout = {
         title: "pH = " + pH.toFixed(1),
-
         xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
         yaxis: {title: "Courant (mA)", range: [-100, 100]},
-
         shapes: shapes,
-
         showlegend: true,
-        legend: {
-            x: 0.02,
-            y: 0.98
-        },
-
+        legend: {x: 0.02, y: 0.98},
         annotations: [
             {
                 x: -1.45,
@@ -244,9 +223,6 @@ function updateGraph(pH) {
             }
         ]
     };
-
-    Plotly.newPlot('graph', [trace1, trace2, trace3, trace4], layout);
-}
 
 // =========================
 // SLIDER
