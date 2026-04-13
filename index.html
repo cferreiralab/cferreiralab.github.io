@@ -138,41 +138,19 @@ function show(section) {
     let html = "";
 
     if(section === "accueil") {
-        html = `
-        <h2>Bienvenue</h2>
-        <p>
-        Ce site propose des simulations et outils interactifs en mathématiques,
-        physique et chimie pour l’enseignement.
-        </p>
-        <div class="card">Titrage</div>
-        <div class="card">Spectrophotométrie</div>
-        <div class="card">Mathématiques</div>
-        `;
+        html = "<h2>Bienvenue</h2><p>Choisissez une catégorie dans le menu.</p>";
     }
 
     if(section === "titrage") {
-        html = `
-        <h2>Titrage</h2>
-        <div class="card">Simulation simple</div>
-        <div class="card">Dosage Fe²⁺</div>
-        <div class="card">Courbe dérivée</div>
-        `;
+        html = "<h2>Titrage</h2><div class='card'>Simulation simple</div>";
     }
 
     if(section === "spectro") {
-        html = `
-        <h2>Spectrophotométrie</h2>
-        <div class="card">Loi de Beer-Lambert</div>
-        <div class="card">Courbe d'étalonnage</div>
-        `;
+        html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
     }
 
     if(section === "maths") {
-        html = `
-        <h2>Maths</h2>
-        <div class="card">Fonction exponentielle</div>
-        <div class="card">Dérivée</div>
-        `;
+        html = "<h2>Maths</h2><div class='card'>Fonction</div>";
     }
 
     document.getElementById("content").innerHTML = html;
@@ -180,8 +158,6 @@ function show(section) {
 
 // affichage par défaut
 show("accueil");
-
-</script>
 
 </script>
 
