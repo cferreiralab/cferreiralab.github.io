@@ -121,8 +121,7 @@ body {
 <div class="sidebar">
     <h2>CFerreiraLab</h2>
    
-   <a onclick="show('accueil')">Accueil</a> 
-    <a onclick="show('accueil')">🏠 Accueil</a>
+    <a onclick="show('accueil')">Accueil</a> 
     <a onclick="show('titrage')">Titrage</a>
     <a onclick="show('spectro')">Spectro</a>
     <a onclick="show('maths')">Maths</a>
@@ -132,29 +131,27 @@ body {
      SCRIPT JAVASCRIPT
 ========================= -->
 
-<script>
-
- if(section === "accueil") {
-    html = `
-    <h2>Bienvenue</h2>
-
-    <p>
-    Ce site propose des simulations et outils interactifs en mathématiques,
-    physique et chimie pour l’enseignement.
-    </p>
-
-    <div class="card">Titrage</div>
-    <div class="card">Spectrophotométrie</div>
-    <div class="card">Mathématiques</div>
-    `;
-  }
-
-/* Fonction qui affiche le contenu selon le menu */
 function show(section) {
 
-    let html = "";  // variable qui contiendra le contenu
+    let html = "";
 
-    /* === CAS 1 : TITRAGE === */
+    /* === ACCUEIL === */
+    if(section === "accueil") {
+        html = `
+        <h2>Bienvenue</h2>
+
+        <p>
+        Ce site propose des simulations et outils interactifs en mathématiques,
+        physique et chimie pour l’enseignement.
+        </p>
+
+        <div class="card">Titrage</div>
+        <div class="card">Spectrophotométrie</div>
+        <div class="card">Mathématiques</div>
+        `;
+    }
+
+    /* === TITRAGE === */
     if(section === "titrage") {
         html = `
         <h2>Titrage</h2>
@@ -165,7 +162,7 @@ function show(section) {
         `;
     }
 
-    /* === CAS 2 : SPECTRO === */
+    /* === SPECTRO === */
     if(section === "spectro") {
         html = `
         <h2>Spectrophotométrie</h2>
@@ -175,7 +172,7 @@ function show(section) {
         `;
     }
 
-    /* === CAS 3 : MATHS === */
+    /* === MATHS === */
     if(section === "maths") {
         html = `
         <h2>Maths</h2>
@@ -185,7 +182,6 @@ function show(section) {
         `;
     }
 
-    /* Injection du contenu dans la page */
     document.getElementById("content").innerHTML = html;
 }
 
