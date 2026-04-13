@@ -64,7 +64,10 @@ function compute(pH) {
 // =========================
 // NERNST (SANS SURTENSION)
 // =========================
-    for (let i = 0; i < E.length; i++) {
+let i_cath_N = [];
+let i_anod_N = [];
+
+for (let i = 0; i < E.length; i++) {
 
     let e = E[i];
 
