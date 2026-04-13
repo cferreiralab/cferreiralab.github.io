@@ -149,11 +149,52 @@ function updateGraph(pH) {
     ];
 
     let layout = {
-        title: "pH = " + pH.toFixed(1),
-        xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
-        yaxis: {title: "Courant (mA)", range: [-100, 100]},
-        shapes: shapes
-    };
+    title: "pH = " + pH.toFixed(1),
+
+    xaxis: {title: "Potentiel E (V)", range: [-1.5, 2]},
+    yaxis: {title: "Courant (mA)", range: [-100, 100]},
+
+    shapes: shapes,
+
+    annotations: [
+
+        // 🔹 encadré info (équivalent Python)
+        {
+            x: -1.45,
+            y: 95,
+            xref: 'x',
+            yref: 'y',
+            align: 'left',
+            showarrow: false,
+            text:
+                "pH = " + pH.toFixed(1) + "<br>" +
+                "E° H₂/H⁺ = 0.00 V<br>" +
+                "E° O₂/H₂O = 1.23 V<br>" +
+                "ηc = " + eta_c.toFixed(2) + " V<br>" +
+                "ηa = " + eta_a.toFixed(2) + " V",
+            bordercolor: "#888",
+            borderwidth: 1,
+            bgcolor: "white"
+        },
+
+        // 🔹 annotation H2
+        {
+            x: data.E_H2_reel - 0.1,
+            y: -10,
+            text: "H₂ ← H⁺",
+            showarrow: false
+        },
+
+        // 🔹 annotation O2
+        {
+            x: data.E_O2_reel + 0.05,
+            y: 10,
+            text: "H₂O → O₂",
+            showarrow: false
+        }
+
+    ]
+};
 
     Plotly.newPlot('graph', [trace1, trace2], layout);
 }
