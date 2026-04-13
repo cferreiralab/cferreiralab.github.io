@@ -105,99 +105,73 @@ function updateGraph(pH) {
 
     ph_display.innerText = pH.toFixed(1);
 
-    let data = compute(pH);
+    function compute(pH) {
 
-    // 🔹 NERNST
     let E_H2 = -0.059 * pH;
     let E_O2 = 1.23 - 0.059 * pH;
 
-    let trace1 = {
-        x: E,
-        y: data.i_cath,
-        mode: 'lines',
-        name: 'Réduction H+ → H2'
-    };
+    let E_H2_reel = E_H2 - eta_c;
+    let E_O2_reel = E_O2 + eta_a;
 
-    let trace2 = {
-        x: E,
-        y: data.i_anod,
-        mode: 'lines',
-        name: 'Oxydation H2O → O2'
-    };
+    let i_cath = [];
+    let i_anod = [];
 
-    // 🔹 NERNST cathodique
-    let trace3 = {
-        x: E,
-        y: data.i_cath_N,
-        mode: 'lines',
-        name: 'H⁺/H₂ (Nernst)',
-        line: {dash: 'dot'}
-    };
+    // =========================
+    // COURBES RÉELLES
+    // =========================
+    for (let i = 0; i < E.length; i++) {
 
-    // 🔹 NERNST anodique
-    let trace4 = {
-        x: E,
-        y: data.i_anod_N,
-        mode: 'lines',
-        name: 'H₂O/O₂ (Nernst)',
-        line: {dash: 'dot'}
-    };
+        let e = E[i];
 
-    // 🔹 courbes Nernst (verticales en pointillé)
-    let shapes = [
-
-        // zone stabilité
-        {
-            type: 'rect',
-            x0: data.E_H2_reel,
-            x1: data.E_O2_reel,
-            y0: -100,
-            y1: 100,
-            fillcolor: 'green',
-            opacity: 0.15,
-            line: {width: 0}
-        },
-
-        // H2 réel
-        {
-            type: 'line',
-            x0: data.E_H2_reel,
-            x1: data.E_H2_reel,
-            y0: -100,
-            y1: 100,
-            line: {dash: 'dash', width: 1}
-        },
-
-        // O2 réel
-        {
-            type: 'line',
-            x0: data.E_O2_reel,
-            x1: data.E_O2_reel,
-            y0: -100,
-            y1: 100,
-            line: {dash: 'dash', width: 1}
-        },
-
-        // H2 Nernst
-        {
-            type: 'line',
-            x0: E_H2,
-            x1: E_H2,
-            y0: -100,
-            y1: 100,
-            line: {dash: 'dot', width: 1}
-        },
-
-        // O2 Nernst
-        {
-            type: 'line',
-            x0: E_O2,
-            x1: E_O2,
-            y0: -100,
-            y1: 100,
-            line: {dash: 'dot', width: 1}
+        if (e < E_H2_reel) {
+            let i_raw = -i0 * (Math.exp(-k * (e - E_H2_reel)) - 1);
+            i_cath.push(i_lim_c * Math.tanh(i_raw / i_lim_c) * 1000);
+        } else {
+            i_cath.push(0);
         }
-    ];
+
+        if (e > E_O2_reel) {
+            let i_raw = i0 * (Math.exp(k * (e - E_O2_reel)) - 1);
+            i_anod.push(i_lim_a * Math.tanh(i_raw / i_lim_a) * 1000);
+        } else {
+            i_anod.push(0);
+        }
+    }
+
+    // =========================
+    // NERNST (CORRIGÉ)
+    // =========================
+    let i_cath_N = [];
+    let i_anod_N = [];
+
+    for (let i = 0; i < E.length; i++) {
+
+        let e = E[i];
+
+        if (e < E_H2) {
+            let i_raw = -i0 * (Math.exp(-k * (e - E_H2)) - 1);
+            i_cath_N.push(i_raw * 1000);
+        } else {
+            i_cath_N.push(0);
+        }
+
+        if (e > E_O2) {
+            let i_raw = i0 * (Math.exp(k * (e - E_O2)) - 1);
+            i_anod_N.push(i_raw * 1000);
+        } else {
+            i_anod_N.push(0);
+        }
+    }
+
+    return {
+        E_H2_reel,
+        E_O2_reel,
+        i_cath,
+        i_anod,
+        i_cath_N,
+        i_anod_N
+    };
+}
 
     let layout = {
     title: "pH = " + pH.toFixed(1),
