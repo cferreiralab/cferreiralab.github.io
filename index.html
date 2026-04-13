@@ -73,14 +73,7 @@ body {
 </div>
 
 <div class="container">
-
-<div class='card'>
-    <strong>Simulation simple</strong><br>
-    <span style="font-size:13px; color:#666;">
-        Courbe de titrage
-    </span>
-</div>
-    
+ 
     <!-- MENU -->
     <div class="sidebar">
         <a onclick="show('accueil')">Accueil</a>
@@ -121,8 +114,17 @@ function show(section) {
 }
 
     if(section === "titrage") {
-        html = "<h2>Titrage</h2><div class='card'>Simulation</div>";
-    }
+    html = `
+    <h2>Titrage</h2>
+
+    <div class='card'>
+        <strong>Simulation simple</strong><br>
+        <span style="font-size:13px; color:#666;">
+            Courbe de titrage
+        </span>
+    </div>
+    `;
+}
 
     if(section === "spectro") {
         html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
