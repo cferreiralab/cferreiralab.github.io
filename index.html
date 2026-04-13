@@ -78,7 +78,7 @@ body {
     <div class="sidebar">
         <a onclick="show('accueil')">Accueil</a>
         <a onclick="show('titrage')">Titrage</a>
-        <a onclick="show('spectro')">Spectro</a>
+        <a onclick="show('spectro')">Electrochimie</a>
         <a onclick="show('maths')">Maths</a>
     </div>
 
@@ -127,7 +127,7 @@ function show(section) {
     }
 
     if(section === "simulation_titrage") {
-        fetch("titrage.html")
+        fetch("i,e eau pH.html")
             .then(response => response.text())
             .then(data => {
                 document.getElementById("content").innerHTML = data;
@@ -139,8 +139,8 @@ function show(section) {
         html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
     }
 
-    if(section === "maths") {
-        html = "<h2>Maths</h2><div class='card'>Fonction</div>";
+    if(section === "Electrochimie") {
+        html = "<h2>Electrochochimie</h2><div class='card'>i,E eau pH</div>";
     }
 
     document.getElementById("content").innerHTML = html;
