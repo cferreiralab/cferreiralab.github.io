@@ -79,7 +79,7 @@ body {
         <a onclick="show('accueil')">Accueil</a>
         <a onclick="show('titrage')">Titrage</a>
         <a onclick="show('spectro')">Electrochimie</a>
-        <a onclick="show('maths')">Maths</a>
+        <a onclick="show('Electrochimie')">Maths</a>
     </div>
 
     <!-- CONTENU -->
@@ -127,7 +127,7 @@ function show(section) {
     }
 
     if(section === "simulation_titrage") {
-        fetch("i,e eau pH.html")
+        fetch("i,E eau pH.html")
             .then(response => response.text())
             .then(data => {
                 document.getElementById("content").innerHTML = data;
