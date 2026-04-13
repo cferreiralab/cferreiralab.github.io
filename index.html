@@ -127,13 +127,22 @@ function show(section) {
     }
 
     if(section === "simulation_titrage") {
-        fetch("i,E eau pH.html")
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById("content").innerHTML = data;
+    fetch("i,E eau pH.html")
+        .then(response => response.text())
+        .then(data => {
+            let container = document.getElementById("content");
+            container.innerHTML = data;
+
+            // 🔥 exécuter les scripts contenus dans titrage.html
+            let scripts = container.querySelectorAll("script");
+            scripts.forEach(oldScript => {
+                let newScript = document.createElement("script");
+                newScript.text = oldScript.text;
+                document.body.appendChild(newScript);
             });
-        return; // ⚠️ IMPORTANT (empêche le reste du code de s'exécuter)
-    }
+        });
+    return;
+}
 
     if(section === "spectro") {
         html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
