@@ -119,32 +119,52 @@ function updateGraph(pH) {
         title: "Potentiel E (V)",
         range: [-1.5, 2],
 
-        zeroline: true,
-        zerolinewidth: 2,
-        zerolinecolor: 'black',
+        anchor: 'free',
+        position: 0,
+
+        dtick: 0.5,
+        ticks: 'inside',
 
         showline: true,
         linewidth: 2,
         linecolor: 'black',
         mirror: true,
-        gridcolor: 'lightgray',
-        ticks: 'inside'
+
+        gridcolor: 'rgba(0,0,0,0.15)',
+
+        minor: {
+            dtick: 0.1,
+            ticks: 'inside',
+            ticklen: 4,
+            showgrid: true,
+            gridcolor: 'rgba(0,0,0,0.08)'
+        }
     },
 
     yaxis: {
         title: "Courant (mA)",
         range: [-100, 100],
 
-        zeroline: true,
-        zerolinewidth: 2,
-        zerolinecolor: 'black',
+        anchor: 'free',
+        position: 0,
+
+        dtick: 20,
+        ticks: 'inside',
 
         showline: true,
         linewidth: 2,
         linecolor: 'black',
         mirror: true,
-        gridcolor: 'lightgray',
-        ticks: 'inside'
+
+        gridcolor: 'rgba(0,0,0,0.15)',
+
+        minor: {
+            dtick: 5,
+            ticks: 'inside',
+            ticklen: 3,
+            showgrid: true,
+            gridcolor: 'rgba(0,0,0,0.08)'
+        }
     },
 
     shapes: shapes,
@@ -152,23 +172,7 @@ function updateGraph(pH) {
     showlegend: true,
     legend: {x:0.02, y:0.02, bgcolor:"rgba(255,255,255,0.8)"},
 
-    annotations: [
-        {
-            x: -1.45,
-            y: 95,
-            showarrow: false,
-            align: 'left',
-            text:
-            "pH = " + pH.toFixed(1) + "<br>" +
-            "E° <sub>H<sub>2</sub>/H<sup>+</sup></sub> = 0.00 V<br>" +
-            "E° <sub>O<sub>2</sub>/H<sub>2</sub>O</sub> = 1.23 V<br>" +
-            "η<sub>c</sub> = " + eta_c.toFixed(2) + " V<br>" +
-            "η<sub>a</sub> = " + eta_a.toFixed(2) + " V",
-            bordercolor: "#888",
-            borderwidth: 1,
-            bgcolor: "white"
-        }
-    ]
+    annotations: [...]
 };
 
     Plotly.newPlot('graph', traces, layout);
