@@ -172,7 +172,23 @@ function updateGraph(pH) {
     showlegend: true,
     legend: {x:0.02, y:0.02, bgcolor:"rgba(255,255,255,0.8)"},
 
-    annotations: [...]
+    annotations: [
+        {
+            x: -1.45,
+            y: 95,
+            showarrow: false,
+            align: 'left',
+            text:
+            "pH = " + pH.toFixed(1) + "<br>" +
+            "E° <sub>H<sub>2</sub>/H<sup>+</sup></sub> = 0.00 V<br>" +
+            "E° <sub>O<sub>2</sub>/H<sub>2</sub>O</sub> = 1.23 V<br>" +
+            "η<sub>c</sub> = " + eta_c.toFixed(2) + " V<br>" +
+            "η<sub>a</sub> = " + eta_a.toFixed(2) + " V",
+            bordercolor: "#888",
+            borderwidth: 1,
+            bgcolor: "white"
+        }
+    ]
 };
 
     Plotly.newPlot('graph', traces, layout);
