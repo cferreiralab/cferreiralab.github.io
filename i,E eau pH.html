@@ -97,8 +97,8 @@ function updateGraph(pH) {
     let traces = [
         {x:E, y:data.i_cath, mode:'lines', name:'Réduction H+ → H2'},
         {x:E, y:data.i_anod, mode:'lines', name:'Oxydation H2O → O2'},
-        {x:E, y:data.i_cath_N, mode:'lines', name:'H+/H2 (Nernst)', line:{dash:'dot'}},
-        {x:E, y:data.i_anod_N, mode:'lines', name:'H2O/O2 (Nernst)', line:{dash:'dot'}}
+        {x:E, y:data.i_cath_N, mode:'lines', name:'H</sub>+<sub>/H2 (Nernst)', line:{dash:'dot'}},
+        {x:E, y:data.i_anod_N, mode:'lines', name:'H<sub>2</sub>O/O<sub>2</sub> (Nernst)', line:{dash:'dot'}}
     ];
 
     let shapes = [
@@ -126,8 +126,8 @@ function updateGraph(pH) {
                 "pH = "+pH.toFixed(1)+"<br>"+
                 "E° <sub>H<sub>2</sub>/H<sup>+</sup></sub> = 0.00 V<br>"+
                 "E° <sub>O<sub>2</sub>/H<sub>2</sub>O</sub> = 1.23 V<br>"+
-                "η<sub>c<sub> = "+eta_c.toFixed(2)+" V<br>"+
-                "η<sub>a<sub> = "+eta_a.toFixed(2)+" V",
+                "η<sub>c</sub> = "+eta_c.toFixed(2)+" V<br>"+
+                "η<sub>a</sub> = "+eta_a.toFixed(2)+" V",
                 bordercolor:"#888", borderwidth:1, bgcolor:"white"
             }
         ]
