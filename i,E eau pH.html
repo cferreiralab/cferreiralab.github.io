@@ -95,9 +95,9 @@ function updateGraph(pH) {
     let E_O2 = 1.23 - 0.059 * pH;
 
     let traces = [
-        {x:E, y:data.i_cath, mode:'lines', name:'Réduction H+ → H2'},
-        {x:E, y:data.i_anod, mode:'lines', name:'Oxydation H2O → O2'},
-        {x:E, y:data.i_cath_N, mode:'lines', name:'H</sub>+<sub>/H2 (Nernst)', line:{dash:'dot'}},
+        {x:E, y:data.i_cath, mode:'lines', name:'Réduction H</sub>+<sub> → H<sub>2</sub>'},
+        {x:E, y:data.i_anod, mode:'lines', name:'Oxydation H<sub>2</sub>O → O<sub>2</sub>'},
+        {x:E, y:data.i_cath_N, mode:'lines', name:'H</sub>+<sub>/H<sub>2</sub> (Nernst)', line:{dash:'dot'}},
         {x:E, y:data.i_anod_N, mode:'lines', name:'H<sub>2</sub>O/O<sub>2</sub> (Nernst)', line:{dash:'dot'}}
     ];
 
