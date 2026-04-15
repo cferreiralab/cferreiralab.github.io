@@ -1,13 +1,64 @@
-<h2>Domaine de stabilité de l'eau</h2>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
 
-<p>pH : <span id="ph_val">0.0</span></p>
-<input type="range" id="ph_slider" min="0" max="12" step="0.1" value="0">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-<div id="graph"></div>
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #eef2f7;
+}
 
-<br>
+.container {
+    display: flex;
+    height: 100vh;
+}
 
-<!-- <button onclick="show('titrage')">⬅ Retour</button> -->
+.graph {
+    flex: 1;
+    padding: 30px;
+}
+
+.graph-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    height: 75%;
+    width: 75%;
+    margin: auto;
+}
+
+#graph {
+    width: 100%;
+    height: calc(100% - 20px);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="graph">
+        <div class="graph-card">
+
+            <!-- SLIDER -->
+            <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+                <span>pH</span>
+                <input type="range" id="ph_slider" min="0" max="12" step="0.1" value="0" style="width:150px;">
+                <span id="ph_val">0.0</span>
+            </div>
+
+            <!-- GRAPH -->
+            <div id="graph"></div>
+
+        </div>
+    </div>
+
+</div>
 
 <script>
 
@@ -26,8 +77,8 @@ let i0 = 1e-3;
 let i_lim_c = -5e-1;
 let i_lim_a = 5e-1;
 
-let slider = document.getElementById("ph_slider");
-let ph_display = document.getElementById("ph_val");
+let slider = null;
+let ph_display = null;
 
 // =========================
 // CALCUL
@@ -49,27 +100,33 @@ function compute(pH) {
 
         let e = E[i];
 
-        // réel
         if (e < E_H2_reel) {
             let i_raw = -i0 * (Math.exp(-k * (e - E_H2_reel)) - 1);
             i_cath.push(i_lim_c * Math.tanh(i_raw / i_lim_c) * 1000);
-        } else i_cath.push(0);
+        } else {
+            i_cath.push(0);
+        }
 
         if (e > E_O2_reel) {
             let i_raw = i0 * (Math.exp(k * (e - E_O2_reel)) - 1);
             i_anod.push(i_lim_a * Math.tanh(i_raw / i_lim_a) * 1000);
-        } else i_anod.push(0);
+        } else {
+            i_anod.push(0);
+        }
 
-        // Nernst
         if (e < E_H2) {
             let i_raw = -i0 * (Math.exp(-k * (e - E_H2)) - 1);
             i_cath_N.push(i_raw * 1000);
-        } else i_cath_N.push(0);
+        } else {
+            i_cath_N.push(0);
+        }
 
         if (e > E_O2) {
             let i_raw = i0 * (Math.exp(k * (e - E_O2)) - 1);
             i_anod_N.push(i_raw * 1000);
-        } else i_anod_N.push(0);
+        } else {
+            i_anod_N.push(0);
+        }
     }
 
     return {
@@ -95,114 +152,131 @@ function updateGraph(pH) {
     let E_O2 = 1.23 - 0.059 * pH;
 
     let traces = [
-    {
-        x: E,
-        y: data.i_cath,
-        mode: 'lines',
-        name: 'Réduction H<sup>+</sup> → H<sub>2</sub>'
-    },
-    {
-        x: E,
-        y: data.i_anod,
-        mode: 'lines',
-        name: 'Oxydation H<sub>2</sub>O → O<sub>2</sub>'
-    },
-    {
-        x: E,
-        y: data.i_cath_N,
-        mode: 'lines',
-        name: 'H<sup>+</sup>/H<sub>2</sub> (Nernst)',
-        line: {dash:'dot'}
-    },
-    {
-        x: E,
-        y: data.i_anod_N,
-        mode: 'lines',
-        name: 'H<sub>2</sub>O/O<sub>2</sub> (Nernst)',
-        line: {dash:'dot'}
-    }
-];
-
-    let shapes = [
-        {type:'rect', x0:data.E_H2_reel, x1:data.E_O2_reel, y0:-100, y1:100,
-         fillcolor:'green', opacity:0.15, line:{width:0}},
-
-        {type:'line', x0:data.E_H2_reel, x1:data.E_H2_reel, y0:-100, y1:100, line:{dash:'dash'}},
-        {type:'line', x0:data.E_O2_reel, x1:data.E_O2_reel, y0:-100, y1:100, line:{dash:'dash'}},
-
-        {type:'line', x0:E_H2, x1:E_H2, y0:-100, y1:100, line:{dash:'dot'}},
-        {type:'line', x0:E_O2, x1:E_O2, y0:-100, y1:100, line:{dash:'dot'}}
+        {
+            x: E,
+            y: data.i_cath,
+            mode: 'lines',
+            name: 'Réduction H<sup>+</sup> → H<sub>2</sub>'
+        },
+        {
+            x: E,
+            y: data.i_anod,
+            mode: 'lines',
+            name: 'Oxydation H<sub>2</sub>O → O<sub>2</sub>'
+        },
+        {
+            x: E,
+            y: data.i_cath_N,
+            mode: 'lines',
+            line: { dash: 'dot' },
+            name: 'H<sup>+</sup>/H<sub>2</sub> (Nernst)'
+        },
+        {
+            x: E,
+            y: data.i_anod_N,
+            mode: 'lines',
+            line: { dash: 'dot' },
+            name: 'H<sub>2</sub>O/O<sub>2</sub> (Nernst)'
+        }
     ];
 
-     let layout = {
-    title: "",
-
-    xaxis: {
-        title: "Potentiel E (V)",
-        range: [-1.5, 2],
-        zeroline: true,
-        zerolinewidth: 1,
-        zerolinecolor: 'black',
-        showline: false,
-        mirror: false,
-        gridcolor: '#e9ebee',
-        ticks: 'inside'
-    },
-
-    yaxis: {
-        title: "Courant (mA)",
-        range: [-100, 100],
-        zeroline: true,
-        zerolinewidth: 1,
-        zerolinecolor: 'black',
-        showline: false,
-        mirror: false,
-        gridcolor: '#e9ebee',
-        ticks: 'inside'
-    },
-
-    plot_bgcolor: 'rgb(250,252,255)',
-    paper_bgcolor: 'white',
-
-    // ✅ tout doit être DANS layout
-    shapes: shapes,
-
-    showlegend: true,
-    legend: {
-        x: 0.02,
-        y: 0.02,
-        bgcolor: "rgba(255,255,255,0.8)"
-    },
-
-    annotations: [
+    let shapes = [
         {
+            type: 'rect',
+            x0: data.E_H2_reel,
+            x1: data.E_O2_reel,
+            y0: -100,
+            y1: 100,
+            fillcolor: 'green',
+            opacity: 0.15,
+            line: { width: 0 }
+        },
+        { type:'line', x0:data.E_H2_reel, x1:data.E_H2_reel, y0:-100, y1:100, line:{dash:'dash'} },
+        { type:'line', x0:data.E_O2_reel, x1:data.E_O2_reel, y0:-100, y1:100, line:{dash:'dash'} },
+        { type:'line', x0:E_H2, x1:E_H2, y0:-100, y1:100, line:{dash:'dot'} },
+        { type:'line', x0:E_O2, x1:E_O2, y0:-100, y1:100, line:{dash:'dot'} }
+    ];
+
+    let layout = {
+        title: "Domaine de stabilité de l'eau",
+
+        xaxis: {
+            title: "Potentiel E (V)",
+            range: [-1.5, 2],
+            zeroline: true,
+            zerolinecolor: 'black',
+            gridcolor: '#e3e6eb'
+        },
+
+        yaxis: {
+            title: "Courant (mA)",
+            range: [-100, 100],
+            zeroline: true,
+            zerolinecolor: 'black',
+            gridcolor: '#e3e6eb'
+        },
+
+        margin: { l: 50, r: 20, t: 30, b: 40 },
+
+        shapes: shapes,
+        plot_bgcolor: "white",
+        paper_bgcolor: "white",
+
+        showlegend: true,
+
+        legend: {
+            x: 0.02,
+            y: 0.02,
+            bgcolor: "rgba(255,255,255,0.8)"
+        },
+
+        annotations: [{
             x: -1.45,
             y: 95,
             showarrow: false,
-            align: 'left',
             text:
-                "E° <sub>H<sub>2</sub>/H<sup>+</sup></sub> = 0.00 V<br>" +
-                "E° <sub>O<sub>2</sub>/H<sub>2</sub>O</sub> = 1.23 V<br>" +
-                "η<sub>c</sub> = " + eta_c.toFixed(2) + " V<br>" +
-                "η<sub>a</sub> = " + eta_a.toFixed(2) + " V",
+                "E° H₂/H⁺ = 0.00 V<br>" +
+                "E° O₂/H₂O = 1.23 V<br>" +
+                "ηc = 0.00 V<br>" +
+                "ηa = 0.50 V",
             bordercolor: "#888",
             borderwidth: 1,
             bgcolor: "white"
-        }
-    ]
-};
+        }]
+    };
 
-    Plotly.newPlot('graph', traces, layout);
+    Plotly.react('graph', traces, layout, {
+        displayModeBar: false
+    });
 }
 
 // =========================
-// SLIDER
+// EVENTS
 // =========================
-slider.addEventListener("input", function() {
-    updateGraph(parseFloat(this.value));
-});
+
 
 // =========================
 // INIT
 // =========================
-updateGraph(0);
+
+function init() {
+
+    slider = document.getElementById("ph_slider");
+    ph_display = document.getElementById("ph_val");
+
+    if (!slider || !ph_display) return;
+
+    slider.oninput = function() {
+    updateGraph(parseFloat(this.value));
+};
+
+    updateGraph(0);
+}
+
+// 🔥 important pour fetch
+setTimeout(init, 0);
+
+</script>
+
+</body>
+</html>
