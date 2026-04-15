@@ -57,7 +57,6 @@ body {
     transition: 0.2s;
 }
 
-/* effet au survol */
 .card:hover {
     background: #f0f0f0;
 }
@@ -79,9 +78,9 @@ body {
     <!-- MENU -->
     <div class="sidebar">
         <a onclick="show('accueil')">Accueil</a>
-        <a onclick="show('titrage')">Titrage</a>
-        <a onclick="show('spectro')">Electrochimie</a>
-        <a onclick="show('Electrochimie')">Maths</a>
+        <a onclick="show('Electrochimie')">Electrochimie</a>
+        <a onclick="show('Spectro')">Spectro</a>
+        <a onclick="show('Maths')">Maths</a>
     </div>
 
     <!-- CONTENU -->
@@ -115,47 +114,40 @@ function show(section) {
         `;
     }
 
-    if(section === "titrage") {
+    if(section === "Electrochimie") {
         html = `
-        <h2>Titrage</h2>
+        <h2>Electrochimie</h2>
 
-        <div class='card' onclick="show('simulation_titrage')">
-            <strong>Simulation simple</strong><br>
+        <div class='card' onclick="show('iE_eau_pH')">
+            <strong>Potentiométrie</strong><br>
             <span style="font-size:13px; color:#666;">
-                Courbe de titrage
+                i,E de l'eau en fonction du pH
             </span>
         </div>
         `;
+
     }
 
-    if(section === "simulation_titrage") {
-    fetch("i,E eau pH.html")
-        .then(response => response.text())
-        .then(data => {
-            let container = document.getElementById("content");
-            container.innerHTML = data;
-
-            // 🔥 exécuter les scripts contenus dans titrage.html
-            let scripts = container.querySelectorAll("script");
-            scripts.forEach(oldScript => {
-                let newScript = document.createElement("script");
-                newScript.text = oldScript.text;
-                document.body.appendChild(newScript);
-            });
-        });
+    if(section === "iE_eau_pH") {
+    document.getElementById("content").innerHTML = `
+        <iframe src="iE_eau_pH.html"
+                style="width:100%; height:90vh; border:none;">
+        </iframe>
+    `;
     return;
 }
 
-    if(section === "spectro") {
+    if(section === "Spectro") {
         html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
     }
 
-    if(section === "Electrochimie") {
-        html = "<h2>Electrochochimie</h2><div class='card'>i,E eau pH</div>";
+    if(section === "Maths") {
+        html = "<h2>Electrochochimie</h2><div class='card'>iE_eau_pH</div>";
     }
 
     document.getElementById("content").innerHTML = html;
 }
+
 show("accueil");
 
 </script>
