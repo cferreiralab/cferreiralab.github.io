@@ -95,8 +95,10 @@ function updateGraph(pH) {
     let E_O2 = 1.23 - 0.059 * pH;
 
     let traces = [
+        {x:E, y:data.i_cath, mode:'lines', name:'Réduction H</sub>+<sub> → H<sub>2</sub>'},
         {x:E, y:data.i_cath, mode:'lines', name:'Réduction H<sup>+</sup> → H<sub>2</sub>'},
         {x:E, y:data.i_anod, mode:'lines', name:'Oxydation H<sub>2</sub>O → O<sub>2</sub>'},
+        {x:E, y:data.i_cath_N, mode:'lines', name:'H</sub>+<sub>/H<sub>2</sub> (Nernst)', line:{dash:'dot'}},
         {x:E, y:data.i_cath_N, mode:'lines', name:'H<sup>+</sup>/H<sub>2</sub> (Nernst)', line:{dash:'dot'}},
         {x:E, y:data.i_anod_N, mode:'lines', name:'H<sub>2</sub>O/O<sub>2</sub> (Nernst)', line:{dash:'dot'}}
     ];
@@ -112,7 +114,7 @@ function updateGraph(pH) {
         {type:'line', x0:E_O2, x1:E_O2, y0:-100, y1:100, line:{dash:'dot'}}
     ];
 
-     let layout = {
+    let layout = {
         title: "",
         xaxis: {title:"Potentiel E (V)", range:[-1.5,2]},
         yaxis: {title:"Courant (mA)", range:[-100,100]},
@@ -132,63 +134,6 @@ function updateGraph(pH) {
             }
         ]
     };
-    title: "",
-
-    xaxis: {
-        title: "Potentiel E (V)",
-        range: [-1.5, 2],
-
-        zeroline: true,
-        zerolinewidth: 2,
-        zerolinecolor: 'black',
-
-        showline: true,
-        linewidth: 2,
-        linecolor: 'black',
-        mirror: true,
-        gridcolor: 'lightgray',
-        ticks: 'inside'
-    },
-
-    yaxis: {
-        title: "Courant (mA)",
-        range: [-100, 100],
-
-        zeroline: true,
-        zerolinewidth: 2,
-        zerolinecolor: 'black',
-
-        showline: true,
-        linewidth: 2,
-        linecolor: 'black',
-        mirror: true,
-        gridcolor: 'lightgray',
-        ticks: 'inside'
-    },
-
-    shapes: shapes,
-
-    showlegend: true,
-    legend: {x:0.02, y:0.02, bgcolor:"rgba(255,255,255,0.8)"},
-
-    annotations: [
-        {
-            x: -1.45,
-            y: 95,
-            showarrow: false,
-            align: 'left',
-            text:
-            "pH = " + pH.toFixed(1) + "<br>" +
-            "E° <sub>H<sub>2</sub>/H<sup>+</sup></sub> = 0.00 V<br>" +
-            "E° <sub>O<sub>2</sub>/H<sub>2</sub>O</sub> = 1.23 V<br>" +
-            "η<sub>c</sub> = " + eta_c.toFixed(2) + " V<br>" +
-            "η<sub>a</sub> = " + eta_a.toFixed(2) + " V",
-            bordercolor: "#888",
-            borderwidth: 1,
-            bgcolor: "white"
-        }
-    ]
-};
 
     Plotly.newPlot('graph', traces, layout);
 }
@@ -204,5 +149,6 @@ slider.addEventListener("input", function() {
 // INIT
 // =========================
 updateGraph(0);
+
 
 </script>
