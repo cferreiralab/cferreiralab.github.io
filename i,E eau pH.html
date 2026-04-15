@@ -144,10 +144,8 @@ function updateGraph(pH) {
         zerolinewidth: 1,
         zerolinecolor: 'black',
         showline: false,
-        linewidth: 1,
-        linecolor: 'black',
         mirror: false,
-        gridcolor: 'lightgray',
+        gridcolor: '#e9ebee',
         ticks: 'inside'
     },
 
@@ -158,11 +156,15 @@ function updateGraph(pH) {
         zerolinewidth: 1,
         zerolinecolor: 'black',
         showline: false,
-        linewidth: 1,
-        linecolor: 'black',
         mirror: false,
-        gridcolor: 'lightgray',
+        gridcolor: '#e9ebee',
         ticks: 'inside'
+    },
+
+    // 👉 TON STYLE ACTUEL (assumé)
+    plot_bgcolor: 'rgb(250,252,255)',   // fond légèrement bleuté
+    paper_bgcolor: 'white'
+
     },
 
     shapes: shapes,
@@ -177,7 +179,6 @@ function updateGraph(pH) {
             showarrow: false,
             align: 'left',
             text:
-            "pH = " + pH.toFixed(1) + "<br>" +
             "E° <sub>H<sub>2</sub>/H<sup>+</sup></sub> = 0.00 V<br>" +
             "E° <sub>O<sub>2</sub>/H<sub>2</sub>O</sub> = 1.23 V<br>" +
             "η<sub>c</sub> = " + eta_c.toFixed(2) + " V<br>" +
