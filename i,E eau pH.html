@@ -1,3 +1,91 @@
+<h2>Domaine de stabilité de l'eau</h2>
+
+<p>pH : <span id="ph_val">0.0</span></p>
+<input type="range" id="ph_slider" min="0" max="12" step="0.1" value="0">
+
+<div id="graph"></div>
+
+<br>
+
+<button onclick="show('titrage')">⬅ Retour</button>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+<script>
+
+// =========================
+// PARAMÈTRES
+// =========================
+let E = [];
+for (let v = -1.5; v <= 2; v += 0.01) E.push(v);
+
+let eta_c = 0;
+let eta_a = 0.5;
+
+let k = 20;
+let i0 = 1e-3;
+
+let i_lim_c = -5e-1;
+let i_lim_a = 5e-1;
+
+let slider = document.getElementById("ph_slider");
+let ph_display = document.getElementById("ph_val");
+
+// =========================
+// CALCUL
+// =========================
+function compute(pH) {
+
+    let E_H2 = -0.059 * pH;
+    let E_O2 = 1.23 - 0.059 * pH;
+
+    let E_H2_reel = E_H2 - eta_c;
+    let E_O2_reel = E_O2 + eta_a;
+
+    let i_cath = [];
+    let i_anod = [];
+    let i_cath_N = [];
+    let i_anod_N = [];
+
+    for (let i = 0; i < E.length; i++) {
+
+        let e = E[i];
+
+        // réel
+        if (e < E_H2_reel) {
+            let i_raw = -i0 * (Math.exp(-k * (e - E_H2_reel)) - 1);
+            i_cath.push(i_lim_c * Math.tanh(i_raw / i_lim_c) * 1000);
+        } else i_cath.push(0);
+
+        if (e > E_O2_reel) {
+            let i_raw = i0 * (Math.exp(k * (e - E_O2_reel)) - 1);
+            i_anod.push(i_lim_a * Math.tanh(i_raw / i_lim_a) * 1000);
+        } else i_anod.push(0);
+
+        // Nernst
+        if (e < E_H2) {
+            let i_raw = -i0 * (Math.exp(-k * (e - E_H2)) - 1);
+            i_cath_N.push(i_raw * 1000);
+        } else i_cath_N.push(0);
+
+        if (e > E_O2) {
+            let i_raw = i0 * (Math.exp(k * (e - E_O2)) - 1);
+            i_anod_N.push(i_raw * 1000);
+        } else i_anod_N.push(0);
+    }
+
+    return {
+        E_H2_reel,
+        E_O2_reel,
+        i_cath,
+        i_anod,
+        i_cath_N,
+        i_anod_N
+    };
+}
+
+// =========================
+// UPDATE GRAPH
+// =========================
 function updateGraph(pH) {
 
     ph_display.innerText = pH.toFixed(1);
@@ -7,9 +95,7 @@ function updateGraph(pH) {
     let E_H2 = -0.059 * pH;
     let E_O2 = 1.23 - 0.059 * pH;
 
-    // =========================
     // TRACES
-    // =========================
     let traces = [
         {
             x: E,
@@ -39,9 +125,7 @@ function updateGraph(pH) {
         }
     ];
 
-    // =========================
     // SHAPES
-    // =========================
     let shapes = [
         {
             type:'rect',
@@ -54,44 +138,14 @@ function updateGraph(pH) {
             line:{width:0}
         },
 
-        {
-            type:'line',
-            x0:data.E_H2_reel,
-            x1:data.E_H2_reel,
-            y0:-100,
-            y1:100,
-            line:{dash:'dash'}
-        },
-        {
-            type:'line',
-            x0:data.E_O2_reel,
-            x1:data.E_O2_reel,
-            y0:-100,
-            y1:100,
-            line:{dash:'dash'}
-        },
+        {type:'line', x0:data.E_H2_reel, x1:data.E_H2_reel, y0:-100, y1:100, line:{dash:'dash'}},
+        {type:'line', x0:data.E_O2_reel, x1:data.E_O2_reel, y0:-100, y1:100, line:{dash:'dash'}},
 
-        {
-            type:'line',
-            x0:E_H2,
-            x1:E_H2,
-            y0:-100,
-            y1:100,
-            line:{dash:'dot'}
-        },
-        {
-            type:'line',
-            x0:E_O2,
-            x1:E_O2,
-            y0:-100,
-            y1:100,
-            line:{dash:'dot'}
-        }
+        {type:'line', x0:E_H2, x1:E_H2, y0:-100, y1:100, line:{dash:'dot'}},
+        {type:'line', x0:E_O2, x1:E_O2, y0:-100, y1:100, line:{dash:'dot'}}
     ];
 
-    // =========================
     // LAYOUT
-    // =========================
     let layout = {
         title: "",
 
@@ -139,5 +193,19 @@ function updateGraph(pH) {
         ]
     };
 
-    Plotly.newPlot('graph', traces, layout);
+    Plotly.react('graph', traces, layout);
 }
+
+// =========================
+// SLIDER
+// =========================
+slider.addEventListener("input", function() {
+    updateGraph(parseFloat(this.value));
+});
+
+// =========================
+// INIT
+// =========================
+updateGraph(0);
+
+</script>
