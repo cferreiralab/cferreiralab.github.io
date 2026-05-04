@@ -10,32 +10,158 @@ body {
     margin: 0;
     font-family: Arial;
     background: #eef2f7;
+    display: flex; 
 }
 
 .container {
     display: flex;
     height: 100vh;
+    background: #eef2f7;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .graph {
     flex: 1;
     padding: 30px;
+    background: #eef2f7;
+}
+
+.graph-row {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
 }
 
 .graph-card {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    height: 75%;
-    width: 75%;
-    margin: auto;
+    flex: 3;
+    height: 60vh;
+}
+
+.montage-card {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.montage-card img {
+    flex: 1;
 }
 
 #graph {
     width: 100%;
-    height: calc(100% - 20px);
+    height: 55vh;
+}
+
+.comment-box {
+    margin-top: 20px;
+    text-align: justify;
+}
+
+.zone-commentaires {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.zone-commentaires .comment-box {
+    flex: 1;
+    min-width: 0;
+}
+
+.top-bar {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 1fr;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.title {
+    font-weight: bold;
+    text-align: left;
+    font-size: 13px;
+}
+
+.controls {
+    text-align: center;
+}
+
+.controls input {
+    width: 150px;
+    margin: 0 5px;
+}
+
+.actions {
+    text-align: right;
+}
+
+.section-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.equations {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 10px 0;
+    font-size: 13px;
+}
+
+.equations div {
+    background: #f4f6fa;
+    padding: 8px;
+    border-radius: 6px;
+    flex: 1;
+}
+
+.equations b {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.highlight {
+    margin: 10px 0;
+    padding: 8px;
+    background: #eef4ff;
+    border-left: 3px solid #4a90e2;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.highlight b {
+    display: block;
+    margin-bottom: 5px;
+}
+
+button {
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #f5f5f5;
+    cursor: pointer;
+}
+
+.img-montage {
+    width: 100%;
+    height: auto;
+}
+
+@media (max-width: 900px) {
+    .zone-commentaires {
+        flex-direction: column;
+    }
 }
 </style>
+
 </head>
 
 <body>
@@ -43,19 +169,139 @@ body {
 <div class="container">
 
     <div class="graph">
-        <div class="graph-card">
 
-            <!-- SLIDER -->
-            <div style="display:flex; align-items:center; gap:5px; margin-bottom:5px;">
+        <!-- CARTE GRAPHE -->
+        <div class="graph-row">
+
+    <!-- GRAPHE -->
+    <div class="graph-card card">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+
+            <div class="title">
+                Courbes i = f(E) de l’eau — influence du pH
+            </div>
+
+            <div class="controls">
                 <span>pH</span>
-                <input type="range" id="ph_slider" min="0" max="12" step="0.1" value="0" style="width:150px;">
+                <input type="range" id="ph_slider" min="0" max="12" step="0.1" value="0">
                 <span id="ph_val">0.0</span>
             </div>
 
-            <!-- GRAPH -->
-            <div id="graph"></div>
+            <div class="actions">
+                <button id="btn_react">Afficher réactions</button>
+            </div>
 
         </div>
+
+        <!-- GRAPH -->
+        <div id="graph"></div>
+
+    </div>
+
+    <!-- MONTAGE -->
+    <div class="montage-card card">
+
+        <div class="section-title">Montage expérimental :</div>
+
+	<img src="montage_iE_eau_pH.png" class="img-montage">
+
+    </div>
+
+</div>
+
+        <!-- COMMENTAIRE -->
+
+
+ <div class="zone-commentaires">
+
+    <!-- COLONNE 1 : commentaire principal -->
+    <div class="comment-box card">
+
+        <div class="section-title">
+            Influence du pH sur les potentiels :
+        </div>
+
+        <p>
+        Le pH influe sur les potentiels de réduction (E<sub>c</sub>) et d’oxydation (E<sub>a</sub>) selon les relations de Nernst à 25 °C :
+        </p>
+
+        <div class="equations">
+            <div>
+                <b>Réduction :</b>
+                E<sub>c</sub> = E° − 0,059 × pH − η<sub>c</sub>
+            </div>
+
+            <div>
+                <b>Oxydation :</b>
+                E<sub>a</sub> = E° − 0,059 × pH + η<sub>a</sub>
+            </div>
+        </div>
+
+        <p>
+        La fenêtre de stabilité de l’eau se déplace vers des potentiels plus négatifs lorsque le pH augmente.
+        Sa largeur théorique (Nernst) est d’environ 1,23 V, mais les surtensions (Cinétique) l’élargissent en pratique autour de 1,73V.
+        </p>
+
+        <div class="highlight">
+            <b>⚡ En dosage potentiométrique :</b>
+            Le pH déplace la fenêtre électrochimique de l'eau, ce qui détermine quels couples redox sont accessibles et observables sans que le solvant interfère
+        </div>
+
+    </div>
+
+
+    <!-- COLONNE 2 : encadré couples -->
+    <div class="comment-box card">
+
+	<div class="section-title">
+    Influence du pH sur les couples de l’eau :
+</div>
+
+<div class="section-title">Milieu acide</div>
+
+<div class="equations">
+    <div>
+        <b>Réduction :</b>
+        2 H<sup>+</sup> + 2 e<sup>-</sup> → H<sub>2</sub><br>
+        E = E°<sub>H<sup>+</sup>/H<sub>2</sub></sub> − 0,059 pH<br>
+        <b>E = −0,059 pH</b>
+    </div>
+
+    <div>
+        <b>Oxydation :</b>
+        O<sub>2</sub> + 4 H<sup>+</sup> + 4 e<sup>-</sup> → 2 H<sub>2</sub>O<br>
+        E = E°<sub>O<sub>2</sub>/H<sub>2</sub>O</sub> − 0,059 pH<br>
+        <b>E = 1,23 − 0,059 pH</b>
+    </div>
+</div>
+
+<div class="section-title">Milieu basique</div>
+
+<div class="equations">
+    <div>
+        <b>Réduction :</b>
+        2 H<sub>2</sub>O + 2 e<sup>-</sup> → H<sub>2</sub> + 2 OH<sup>-</sup><br>
+        E = E°<sub>H<sub>2</sub>O/H<sub>2</sub></sub> − 0,059 log[OH<sup>-</sup>]<br>
+        E = −0,828 + 0,059(14 − pH)<br>
+        <b>E = −0,059 pH</b>
+    </div>
+
+    <div>
+        <b>Oxydation :</b>
+        O<sub>2</sub> + 2 H<sub>2</sub>O + 4 e<sup>-</sup> → 4 OH<sup>-</sup><br>
+        E = E°<sub>O<sub>2</sub>/OH<sup>-</sup></sub> − 0,059 log[OH<sup>-</sup>]<br>
+        E = 0,40 + 0,059(14 − pH)<br>
+        <b>E = 1,23 − 0,059 pH</b>
+    </div>
+</div>
+
+<div class="highlight">
+    <b>Conclusion :</b>
+    Les espèces changent (H<sup>+</sup> / OH<sup>-</sup>), mais E = f(pH) reste identique.
+</div>
+
     </div>
 
 </div>
@@ -80,9 +326,12 @@ let i_lim_a = 5e-1;
 let slider = null;
 let ph_display = null;
 
+let showReactions = false;
+
 // =========================
 // CALCUL
 // =========================
+
 function compute(pH) {
 
     let E_H2 = -0.059 * pH;
@@ -142,108 +391,286 @@ function compute(pH) {
 // =========================
 // UPDATE GRAPH
 // =========================
+
 function updateGraph(pH) {
 
+    // Affichage pH
     ph_display.innerText = pH.toFixed(1);
 
-    let data = compute(pH);
+    // Calcul des données
+    const data = compute(pH);
 
-    let E_H2 = -0.059 * pH;
-    let E_O2 = 1.23 - 0.059 * pH;
+    // Potentiels théoriques
+    const E_H2 = -0.059 * pH;
+    const E_O2 = 1.23 - 0.059 * pH;
 
-    let traces = [
+    // =========================
+    // ANNOTATION DYNAMIQUE
+    // =========================
+
+    let annotationText;
+
+    if (pH < 7) {
+        annotationText =
+            "<b>Milieu acide</b><br>" +
+            "E° (H₂/H⁺) = 0.00 V<br>" +
+            "E° (O₂/H₂O) = 1.23 V<br>" +
+            "η<sub>c</sub> = 0.00 V<br>" +
+            "η<sub>a</sub> = 0.50 V";
+    } else {
+        annotationText =
+            "<b>Milieu basique</b><br>" +
+            "E° (H₂O/H₂) = -0.83 V<br>" +
+            "E° (O₂/OH⁻) = 0.40 V<br>" +
+            "η<sub>c</sub> = 0.00 V<br>" +
+            "η<sub>a</sub> = 0.50 V";
+    }
+
+let annotations = [
+    {
+        x: -1.15,
+        y: 90,
+        showarrow: false,
+        text: annotationText,
+        bordercolor: "#888",
+        borderwidth: 1,
+        align: "left",
+        bgcolor: "white",
+        font: { size: 12 }
+    }
+];
+
+annotations.push({
+    x: 0.02,
+    y: -0.30,
+    xref: "paper",
+    yref: "paper",
+    showarrow: false,
+       text:
+        "<span style='color:rgb(80,160,80); font-size:25px;'>■</span> " +
+        "Zone de stabilité (thermodynamique – Nernst)",
+    align: "left",
+    font: { size: 12 }
+});
+
+annotations.push({
+    x: 0.95,
+    y: -0.30,
+    xref: "paper",
+    yref: "paper",
+    showarrow: false,
+      text:
+        "<span style='color:rgb(180,230,180); font-size:25px;'>■</span> " +
+        "Zone métastable (cinétique – surtensions)",
+    align: "left",
+    font: { size: 12 }
+});
+
+    // =========================
+    // TRACES
+    // =========================
+
+    const traces = [
         {
             x: E,
             y: data.i_cath,
             mode: 'lines',
-            name: 'Réduction H<sup>+</sup> → H<sub>2</sub>'
+            name: 'i<sub>c</sub> (cinétique)'
         },
         {
             x: E,
             y: data.i_anod,
             mode: 'lines',
-            name: 'Oxydation H<sub>2</sub>O → O<sub>2</sub>'
+            name: 'i<sub>a</sub> (cinétique)'
         },
         {
             x: E,
             y: data.i_cath_N,
             mode: 'lines',
             line: { dash: 'dot' },
-            name: 'H<sup>+</sup>/H<sub>2</sub> (Nernst)'
+            name: 'i<sub>c</sub> (Nernst)'
         },
         {
             x: E,
             y: data.i_anod_N,
             mode: 'lines',
             line: { dash: 'dot' },
-            name: 'H<sub>2</sub>O/O<sub>2</sub> (Nernst)'
+            name: 'i<sub>a</sub> (Nernst)'
         }
     ];
 
-    let shapes = [
+if (showReactions) {
+
+    if (pH < 7) {
+        annotations.push(
+            {
+                x: E_H2-0.02,
+                y: -70,
+                showarrow: false,
+                text: "H₂ ← 2 H⁺",
+	xanchor: "right", 
+                bgcolor: "rgba(0, 100, 255, 0.1)",
+                bordercolor: "blue",
+                borderwidth: 1,
+                font: { color: "blue" }
+            },
+            {
+                x:data.E_O2_reel+0.02,
+                y: 70,
+                showarrow: false,
+                text: "H₂O → O₂ ",
+	xanchor: "left", 
+                bgcolor: "rgba(255, 0, 0, 0.1)",
+                bordercolor: "red",
+                borderwidth: 1,
+                font: { color: "red" }
+            }
+        );
+    } else {
+        annotations.push(
+            {
+                x: E_H2-0.02,
+                y: -70,
+                showarrow: false,
+                text: "H₂  ←  H₂O ",
+	xanchor: "right", 
+                bgcolor: "rgba(0, 100, 255, 0.1)",
+                bordercolor: "blue",
+                borderwidth: 1,
+                font: { color: "blue" }
+            },
+            {
+                x: data.E_O2_reel+0.02,
+                y: 70,
+                showarrow: false,
+                text: "OH⁻ → O₂",
+	xanchor: "left", 
+                bgcolor: "rgba(255, 0, 0, 0.1)",
+                bordercolor: "red",
+                borderwidth: 1,
+                font: { color: "red" }
+            }
+        );
+    }
+}
+    // =========================
+    // SHAPES (zones + lignes)
+    // =========================
+
+    const shapes = [
+
+        // Zone de stabilité
+        // 🔹 Zone réelle (clair)
+ {
+        type: 'rect',
+        x0: data.E_H2_reel,
+        x1: data.E_O2_reel,
+        y0: -100,
+        y1: 100,
+        fillcolor: 'green',
+        opacity: 0.15,
+        line: { width: 0 }
+    },
+
+    // 🔸 Zone Nernst (foncé)
+    {
+        type: 'rect',
+        x0: E_H2,
+        x1: E_O2,
+        y0: -100,
+        y1: 100,
+        fillcolor: 'rgba(0, 120, 0, 0.30)',
+        line: { width: 0 }
+    },
+
+        // Lignes cinétiques (trait plein)
         {
-            type: 'rect',
+            type: 'line',
             x0: data.E_H2_reel,
+            x1: data.E_H2_reel,
+            y0: -100,
+            y1: 100,
+            line: { color: 'black', width: 1 }
+        },
+        {
+            type: 'line',
+            x0: data.E_O2_reel,
             x1: data.E_O2_reel,
             y0: -100,
             y1: 100,
-            fillcolor: 'green',
-            opacity: 0.15,
-            line: { width: 0 }
+            line: { color: 'black', width: 1 }
         },
-        { type:'line', x0:data.E_H2_reel, x1:data.E_H2_reel, y0:-100, y1:100, line:{dash:'dash'} },
-        { type:'line', x0:data.E_O2_reel, x1:data.E_O2_reel, y0:-100, y1:100, line:{dash:'dash'} },
-        { type:'line', x0:E_H2, x1:E_H2, y0:-100, y1:100, line:{dash:'dot'} },
-        { type:'line', x0:E_O2, x1:E_O2, y0:-100, y1:100, line:{dash:'dot'} }
-    ];
 
-    let layout = {
-        title: "Domaine de stabilité de l'eau",
+        // Lignes Nernst (pointillé)
+        {
+            type: 'line',
+            x0: E_H2,
+            x1: E_H2,
+            y0: -100,
+            y1: 100,
+            line: { dash: 'dot' }
+        },
+        {
+            type: 'line',
+            x0: E_O2,
+            x1: E_O2,
+            y0: -100,
+            y1: 100,
+            line: { dash: 'dot' }
+        },
+
+   
+];
+    
+
+    // =========================
+    // LAYOUT
+    // =========================
+
+    const layout = {
 
         xaxis: {
-            title: "Potentiel E (V)",
+           title: {
+    	text: "Potentiel E (V)",
+    	standoff: 20
+},
             range: [-1.5, 2],
             zeroline: true,
             zerolinecolor: 'black',
-            gridcolor: '#e3e6eb'
+            gridcolor: '#e3e6eb',
+           
         },
 
         yaxis: {
-            title: "Courant (mA)",
+            title: "Courant i (mA)",
             range: [-100, 100],
             zeroline: true,
             zerolinecolor: 'black',
             gridcolor: '#e3e6eb'
         },
 
-        margin: { l: 50, r: 20, t: 30, b: 40 },
+        margin: { l: 60, r: 20, t: 30, b: 80 },
 
         shapes: shapes,
-        plot_bgcolor: "white",
-        paper_bgcolor: "white",
+
+        plot_bgcolor: "rgba(0,0,0,0)",
+        paper_bgcolor: "rgba(0,0,0,0)",
 
         showlegend: true,
 
         legend: {
             x: 0.02,
-            y: 0.02,
+            y: 0.20,
             bgcolor: "rgba(255,255,255,0.8)"
         },
 
-        annotations: [{
-            x: -1.45,
-            y: 95,
-            showarrow: false,
-            text:
-                "E° H₂/H⁺ = 0.00 V<br>" +
-                "E° O₂/H₂O = 1.23 V<br>" +
-                "ηc = 0.00 V<br>" +
-                "ηa = 0.50 V",
-            bordercolor: "#888",
-            borderwidth: 1,
-            bgcolor: "white"
-        }]
+annotations: annotations
+
     };
+
+    // =========================
+    // RENDER
+    // =========================
 
     Plotly.react('graph', traces, layout, {
         displayModeBar: false
@@ -263,16 +690,27 @@ function init() {
 
     slider = document.getElementById("ph_slider");
     ph_display = document.getElementById("ph_val");
+    const btn = document.getElementById("btn_react");
 
-    if (!slider || !ph_display) return;
+    if (!slider || !ph_display || !btn) return;
 
+    // Slider
     slider.oninput = function() {
-    updateGraph(parseFloat(this.value));
-};
+        updateGraph(parseFloat(this.value));
+    };
+
+    // Bouton (indépendant)
+    btn.onclick = function() {
+        showReactions = !showReactions;
+
+        // option UX sympa
+        this.innerText = showReactions ? "Masquer réactions" : "Afficher réactions";
+
+        updateGraph(parseFloat(slider.value));
+    };
 
     updateGraph(0);
 }
-
 // 🔥 important pour fetch
 setTimeout(init, 0);
 

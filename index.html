@@ -7,9 +7,28 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <style>
-body {
+
+html, body {
+    height: 100%;
     margin: 0;
     font-family: Arial;
+    background: #eef2f7;
+}
+
+.container {
+    display: flex;
+}
+
+.contact-container {
+    margin-top: auto;
+    width: 100%;
+}
+
+/* HEADER */
+.header {
+    padding: 20px;
+    border-bottom: 2px solid #2c3e50;
+    background: white;
 }
 
 /* MENU */
@@ -17,8 +36,13 @@ body {
     width: 180px;
     background: #2c3e50;
     color: white;
-    height: 100vh;
+    height: calc(100vh - 80px);
     padding: 15px;
+
+    display: flex;
+    flex-direction: column;
+
+    box-sizing: border-box;
 }
 
 .sidebar a {
@@ -26,21 +50,64 @@ body {
     color: white;
     padding: 10px;
     text-decoration: none;
+    cursor: pointer;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    transition: background 0.2s, box-shadow 0.2s;
+
+    border-radius: 8px;
+    margin-bottom: 5px;
+
 }
 
 .sidebar a:hover {
     background: #34495e;
+    border-radius: 8px;
+}
+
+.sidebar a.active {
+    background: #3d566e;
+    box-shadow: inset 4px 0 0 #5dade2;
+    font-weight: 500;
+}
+
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    margin-left: 10px;
+
+    transition: max-height 0.3s ease, padding 0.5s;
+}
+
+.submenu.open {
+    max-height: 200px; /* ajuste si besoin */
+}
+
+.submenu a {
+    font-size: 13px;
+    padding-left: 20px;
+    background: #34495e;
+}
+
+.submenu a:hover {
+    background: #3d566e;
+}
+
+.submenu a.active {
+    background: #5dade2;
+    color: white;
+    font-weight: 500;
 }
 
 /* CONTENU */
-.container {
-    display: flex;
-}
-
 .content {
     flex: 1;
     padding: 20px;
     text-align: center;
+    height: calc(100vh - 80px);
+    overflow-y: auto;
 }
 
 /* CARTES */
@@ -52,7 +119,6 @@ body {
     background: white;
     border-radius: 8px;
     border: 1px solid #ddd;
-    text-align: center;
     cursor: pointer;
     transition: 0.2s;
 }
@@ -60,13 +126,24 @@ body {
 .card:hover {
     background: #f0f0f0;
 }
+
+.card.contact {
+    background: #2c3e50;
+    color: white;
+    font-weight: bold;
+}
+
+.card.contact:hover {
+    background: #34495e;
+}
+
 </style>
 </head>
 
 <body>
 
 <!-- HEADER -->
-<div style="padding:20px; border-bottom:2px solid #2c3e50;">
+<div class="header">
     <h1 style="margin:0;">CFerreiraLab</h1>
     <p style="margin:5px 0 0;">
         Mathématiques, Physique et Chimie – Simulations et prototypage
@@ -76,25 +153,143 @@ body {
 <div class="container">
  
     <!-- MENU -->
-    <div class="sidebar">
-        <a onclick="show('accueil')">Accueil</a>
-        <a onclick="show('Electrochimie')">Electrochimie</a>
-        <a onclick="show('Spectro')">Spectro</a>
-        <a onclick="show('Maths')">Maths</a>
+   <div class="sidebar">
+
+    <!-- MENU HAUT -->
+    <div>
+        <a data-section="accueil" onclick="show('accueil')">Accueil</a>
+    <div>
+<a data-section="electrochimie" onclick="openSection('electrochimie')">Electrochimie</a>
+    	<div id="submenu-electrochimie" class="submenu">
+<a data-section="potentiometrie" onclick="show('potentiometrie', this)">
+    Potentiométrie
+</a>	</div>
+	</div>
+
+
+<a data-section="videos" onclick="show('videos')">Vidéos TP</a>
+<a data-section="maths" onclick="show('maths')">Maths</a>
     </div>
 
-    <!-- CONTENU -->
-    <div class="content" id="content">
-    </div>
+    <!-- MENU BAS (CONTACT) -->
+    <div class="contact-container">
+<a data-section="contact" onclick="show('contact')">Contact</a>    </div>
+
+</div>
+   <div class="content" id="content"></div>
 
 </div>
 
 <script>
 
-function show(section) {
+const sectionMap = {
+    "potentiometrie": "electrochimie",
+    "iE_eau_pH": "potentiometrie",
+
+    "video_viscosite": "videos",
+    "video_tension": "videos"
+};
+
+
+function closeAllSubmenus() {
+    document.querySelectorAll(".submenu").forEach(menu => {
+        menu.classList.remove("open");
+    });
+}
+
+function openSection(section) {
+
+    // 🔥 ferme tout
+    closeAllSubmenus();
+
+    // 🔥 ouvre le bon
+    const submenu = document.getElementById("submenu-" + section);
+    if(submenu) {
+	submenu.classList.add("open");    }
+
+    // 🔥 affiche le contenu
+    show(section);
+}
+
+function goToSimu(section, parentSection) {
+    const el = document.querySelector(`[data-section="${parentSection}"]`);
+    show(section, el);
+}
+
+
+function toggleSection(section) {
+
+    const submenu = document.getElementById("submenu-" + section);
+
+    if(submenu.style.display === "block") {
+        submenu.style.display = "none";
+    } else {
+        submenu.classList.add("open");
+    }
+
+    show(section); // 🔥 important
+}
+
+function go(section) {
+    const el = document.querySelector(`[data-section="${section}"]`);
+    show(section, el);
+}
+
+function show(section, el = null) {
+
+    // 🔥 déterminer les niveaux (UNE SEULE FOIS)
+    const subSection = sectionMap[section] || section;
+    const mainSection = sectionMap[subSection] || subSection;
+
+    // 🔥 ouvrir le bon menu
+    closeAllSubmenus();
+    const submenu = document.getElementById("submenu-" + mainSection);
+    if(submenu) submenu.classList.add("open");
+
+    // 🔥 reset
+    document.querySelectorAll(".sidebar a").forEach(link => {
+        link.classList.remove("active");
+    });
+
+    // 🔥 activer section principale
+    const mainBtn = document.querySelector(`.sidebar a[data-section="${mainSection}"]`);
+    if(mainBtn) mainBtn.classList.add("active");
+
+// 🔥 activer sous-section
+if(el) {
+    el.classList.add("active");
+} else {
+    const subBtn = document.querySelector(`.submenu a[data-section="${subSection}"]`);
+    if(subBtn) subBtn.classList.add("active");
+}
 
     let html = "";
 
+
+if(section === "contact") {
+
+    const user = "carlos.ferreira1";
+    const domain = "ac-nantes.fr";
+    const mail = user + "@" + domain;
+
+    html = `
+    <h2>Contact</h2>
+
+    <p>
+    Vous pouvez me contacter pour toute question, projet ou collaboration.
+    </p>
+
+    <div class="card contact" onclick="window.location.href='mailto:${mail}'">
+        📧 Me contacter
+    </div>
+
+    <p style="font-size:12px; color:#777;">
+    Ou adresse : ${mail}
+    </p>
+    `;
+}
+
+    /* ACCUEIL */
     if(section === "accueil") {
         html = `
         <h2>Bienvenue</h2>
@@ -114,35 +309,82 @@ function show(section) {
         `;
     }
 
-    if(section === "Electrochimie") {
-        html = `
-        <h2>Electrochimie</h2>
+    /* ELECTROCHIMIE */
+   if(section === "electrochimie") {
+    html = `
+    <h2>Electrochimie</h2>
 
-        <div class='card' onclick="show('iE_eau_pH')">
-            <strong>Potentiométrie</strong><br>
-            <span style="font-size:13px; color:#666;">
-                i,E de l'eau en fonction du pH
-            </span>
-        </div>
-        `;
+<div class='card' onclick="go('potentiometrie')">
+    <strong>Potentiométrie</strong><br>
 
-    }
+    <span style="font-size:13px; color:#666;">
+        Étude des courbes i = f(E) et des phénomènes électrochimiques associés
+    </span>
 
-    if(section === "iE_eau_pH") {
-    document.getElementById("content").innerHTML = `
-        <iframe src="iE_eau_pH.html"
-                style="width:100%; height:90vh; border:none;">
-        </iframe>
+    <br><br>
+
+    <span style="font-size:12px; color:#888;">
+        Stabilité de l'eau • Surtensions • Courants limites • Dosage Fe²⁺
+    </span>
+</div>
     `;
-    return;
 }
 
-    if(section === "Spectro") {
-        html = "<h2>Spectro</h2><div class='card'>Beer-Lambert</div>";
+if(section === "potentiometrie") {
+    html = `
+    <h2>Potentiométrie</h2>
+
+<div class='card' onclick="show('iE_eau_pH')">
+    <strong>Courbes i = f(E) de l’eau</strong><br>
+
+    <span style="font-size:13px; color:#666;">
+        Visualiser l’effet du pH sur les potentiels et la fenêtre électrochimique
+    </span>
+
+    <br><br>
+
+    <span style="font-size:12px; color:#888;">
+        Nernst • Surtensions • Domaine de stabilité
+    </span>
+</div>
+    `;
+}
+
+    /* PAGE SIMU */
+    if(section === "iE_eau_pH") {
+        document.getElementById("content").innerHTML = `
+            <iframe src="iE_eau_pH.html"
+                    style="width:100%; height:100%; border:none;">
+            </iframe>
+        `;
+        return;
     }
 
-    if(section === "Maths") {
-        html = "<h2>Electrochochimie</h2><div class='card'>iE_eau_pH</div>";
+    /* VIDEOS */
+   if(section === "videos") {
+    html = `
+    <h2>Vidéos de TP</h2>
+
+    <div class='card'>
+        Viscosité
+    </div>
+
+    <div class='card'>
+        Tension superficielle
+    </div>
+
+   `;
+}
+
+    /* MATHS */
+    if(section === "maths") {
+        html = `
+        <h2>Mathématiques</h2>
+
+        <div class='card'>
+            À venir
+        </div>
+        `;
     }
 
     document.getElementById("content").innerHTML = html;
