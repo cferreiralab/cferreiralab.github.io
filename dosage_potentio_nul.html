@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dosage Fe²⁺ / MnO₄⁻ — Simulation</title>
+
+<!-- CHART.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+<!-- PLUGIN ANNOTATION -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3"></script>
+
+<script>
+Chart.register(window['chartjs-plugin-annotation']);
+</script>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    <!--background: #f8f8f8;-->
+    margin: 20px;
+}
+h1 {
+    text-align: center;
+    color: #1a3a5c;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.section {
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 25px;
+}
+.section-title {
+    font-weight: bold;
+    font-size: 15px;
+    color: #1a3a5c;
+    margin-bottom: 10px;
+}
+canvas { width: 100%; }
+
+.bottom-boxes{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+	align-items:start;
+}
+
+.encadre{
+    background:white;
+    border:1px solid #ccc;
+    border-radius:6px;
+    padding:14px;
+    box-sizing:border-box;
+}
+
+.encadre:first-child{
+    grid-column:1;
+}
+.encadre h2 {
+    margin: 0 0 10px;
+    color: #1a3a5c;
+    font-size: 15px;
+}
+.charts-row {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+
+canvas {
+    width: 100% !important;
+    height: auto !important;
+}
+
+.chart-box:first-child {
+    flex: 1;
+    height: 350px;  /* hauteur */
+}
+.chart-box:last-child {
+    flex: 1;
+    height: 350px;  /* hauteur */
+}
+
+
+.chart-wrapper {
+    position: relative;
+}
+
+#chart-polarisation {
+    height: 320px !important;   /* ou la hauteur que tu veux */
+}
+
+#chart-titrage {
+    /* height: 260px !important;    ou la hauteur que tu veux */
+}
+
+#legend-box {
+    position: absolute;
+    bottom: 40px;
+    right: 30px;
+
+    background: rgba(255,255,255,0.85);
+    border: 1px solid #aaa;
+    border-radius: 6px;
+
+    padding: 6px 12px;
+    font-size: 11px;
+    line-height: 1.1;
+
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+}
+
+.top-bar{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    margin-bottom:10px;
+}
+
+.slider-box{
+    display:flex;
+    align-items:center;
+    gap:1px;
+
+    margin-left:auto;
+}
+
+.slider-box input[type="range"]{
+    width:120px;
+}
+
+#slider-display{
+    display:inline-block;
+    width:70px;
+    text-align:right;
+}
+
+#info-box {
+    position: absolute;
+    top: 20px;
+    left: 60px;
+    background: rgba(255,255,255,0.88);
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+#info-box p {
+    margin: 2px 0;
+}
+
+#info-box p {
+    margin: 2px 0;
+}
+
+#conc-box {
+    position: absolute;
+    bottom : 60px;
+    right: 25px;
+    background: rgba(255,255,255,0.85);
+    padding: 6px 10px;
+    font-size: 12px;
+	border: 1px solid #aaa;
+    border-radius: 6px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+    
+#conc-box p {
+    margin: 2px 0;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+}
+#btn-trajectoires {
+    margin-left: auto;
+    margin-right: 10px;
+}
+.btn-style {
+    background: #ead7ff;
+    color: #111;
+
+    border: 1px solid #6b21a8;
+    border-radius: 6px;
+
+    padding: 6px 8px;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    transition: 0.15s;
+	margin-rigth: -100px;
+}
+
+.btn-style:hover {
+    background: #dcc2ff;
+}
+
+#btn-points {
+
+    padding: 6px 8px;
+    margin-left: auto;
+    border: 1px solid #6b21a8;
+    border-radius: 6px;
+
+    background: #ead7ff;
+
+    cursor: pointer;
+
+    font-size: 12px;
+}
+
+#btn-points:hover {
+    background: #dcc2ff;
+}
+
+.etat-systeme-large {
+    position: relative;
+    overflow: visible;
+}
+
+#pourbaix {
+    display: block;
+}
+
+#pourbaix-point {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+	z-index:10;
+}
+.titrage-canvas-box {
+    height: 300px;
+}
+.dosage-conditions{
+    width:100%;
+    text-align:center;
+    margin-top:0px;
+    font-size:12px;
+    color:#1a3a5c;
+    background:#f4f6fa;
+    border-radius:6px;
+    padding:0px 10px;
+    box-sizing:border-box;
+}
+.ph-box{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    line-height:1.5;
+    font-size:14px;
+	text-align: justify;
+}
+.ph-box .section-title{
+    font-weight:600;
+    margin-bottom:10px;
+    font-size:14px;
+    color:#1a3a5c;
+}
+.ph-box .equations{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    margin:5px 0;
+}
+.ph-box .equations div{
+    background:#f4f6fa;
+    padding:10px;
+    border-radius:6px;
+	}
+.ph-box .highlight{
+    margin-top:5px;
+    padding:5px;
+    background:#eef4ff;
+    border-left:3px solid #4a90e2;
+    border-radius:5px;
+}
+.ph-box p {
+    margin-bottom: 2px;
+}
+
+.ph-box ul {
+    margin-top: 2px;
+}
+.equations {line-height: 1.2;}
+.equations p,
+.equations div {
+    margin: 0px 0;
+}
+.reaction-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0px 0;
+    line-height: 1;
+}
+
+.number {
+    font-weight: bold;
+    min-width: 16px;
+}
+
+.ks {
+    margin-left: 25px; /* espace fixe entre réaction et Ks */
+    white-space: nowrap;
+}
+}
+.etat-systeme-large .top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+.legend-trajectoires{
+    position:absolute;
+    top:80px;
+    right:45px;
+    background:rgba(255,255,255,0.92);
+    border:1px solid #aaa;
+    border-radius:6px;
+    padding:8px 10px;
+    font-size:12px;
+    display:none;
+    box-shadow:0 0 4px rgba(0,0,0,0.15);
+    z-index:20;
+}
+.legend-trajectoires div{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin:3px 0;
+}
+.legend-line{
+    width:24px;
+    height:0;
+    border-top:3px solid;
+}
+.legend-line.blue{
+    border-color:#3366cc;
+}
+.legend-line.green{
+    border-color:#009966;
+}
+.legend-line.red{
+    border-color:#cc2222;
+}
+
+</style>
+</head>
+
+<body>
+
+<body>
+
+<h1>Titrage potentiométrique Fe²⁺/ MnO₄⁻ (courant nul)</h1>
+
+<div class="charts-row">
+
+    <!-- ===================================== -->
+    <!-- COURBES i = f(E) -->
+    <!-- ===================================== -->
+    <div class="section chart-box">
+
+        <!-- BARRE TITRE + SLIDER -->
+        <div class="top-bar">
+
+            <div class="section-title">
+                Courants anodiques et cathodiques — i = f(E)
+            </div>
+
+            <div class="slider-box">
+
+                <strong>V (mL)&nbsp;:</strong>
+
+                <input
+                    type="range"
+                    id="slider"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0"
+                >
+
+                <span id="slider-display">0.00 mL</span>
+
+            </div>
+
+        </div>
+
+        <!-- GRAPHIQUE -->
+		<div class="chart-wrapper">
+
+		<canvas id="chart-polarisation"></canvas>
+		<div id="info-box">
+			<p>E = <span id="val-E">—</span> V</p>
+			<p>pH = <span id="val-pH">—</span></p>
+		</div>
+		<div id="legend-box">
+
+	  <div style="margin-bottom:8px;">
+		E°<sub>Fe³⁺/Fe²⁺</sub> 	 = <span id="e0-fe-display"></span> V<br>
+		E°<sub>MnO₄⁻/Mn²⁺</sub> = <span id="e0-mn-display"></span> V<br>
+		E°<sub>H⁺/H₂</sub> 	 = <span id="e0-h2-display"></span> V<br>
+		E°<sub>O₂/H₂O</sub>  	 = <span id="e0-o2-display"></span> V
+	  </div>
+
+	  <div>
+		η<sub>a</sub>(MnO₄⁻/Mn²⁺) =  <span id="eta-mn-display"></span> V<br>
+		η<sub>a</sub>(O₂/H₂O) =	<span id="eta-o2-display"></span> V
+	  </div>
+	</div>
+	</div>
+
+        <!-- WARNING -->
+        <div
+            id="warning-box"
+            style="
+                display:none;
+                margin-top:10px;
+                padding:10px;
+                border:1px solid #c00;
+                background:#fee;
+                color:#c00;
+            "
+        >
+            ⚠ précipitation Fe(OH)₃ — pH limite atteint
+        </div>
+
+    </div>
+
+    <!-- ===================================== -->
+    <!-- COURBE DE TITRAGE -->
+    <!-- ===================================== -->
+    <div class="section chart-box">
+
+<div class="top-bar">
+
+    <div class="section-title">
+        Courbe de dosage — E = f(V)
+    </div>
+
+    <button
+    id="btn-points"
+    class="btn-style"
+    style="width:240px; margin-right:20px;"
+	>
+        Afficher les points caractéristiques
+    </button>
+
+</div>
+
+    <div class="chart-wrapper">
+	<div class="dosage-conditions">
+		[Fe²⁺]₀ = 1.2 × 10⁻² mol·L⁻¹
+		&nbsp;&nbsp;•&nbsp;&nbsp;
+		[MnO₄⁻] = 2.0 × 10⁻² mol·L⁻¹
+		&nbsp;&nbsp;•&nbsp;&nbsp;
+		pH₀ = 0
+		&nbsp;&nbsp;•&nbsp;&nbsp;
+		V<sub>essai</sub> = 50.0 mL
+</div>
+	<div class="titrage-canvas-box">
+		<canvas id="chart-titrage"></canvas>
+	</div>
+
+    <div id="conc-box">
+        <p>[Fe²⁺] = <span id="val-cfe2">—</span></p>
+        <p>[Fe³⁺] = <span id="val-cfe3">—</span></p>
+        <p>[Mn²⁺] = <span id="val-cmn2">—</span></p>
+        <p>[MnO₄⁻] = <span id="val-cmno4">—</span></p>
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+
+
+<!-- ===================================== -->
+<!-- BLOCS INFOS -->
+<!-- ===================================== -->
+<div class="bottom-boxes">
+
+    <!-- POURBAIX -->
+    <div class="encadre etat-systeme-large">
+
+        <div class="top-bar">
+			<h2>Diagramme de Pourbaix</h2>
+			<button id="btn-trajectoires" class="btn-style">
+				Afficher trajectoires pH
+			</button>
+		</div>
+
+        <canvas id="pourbaix" width="700" height="400"
+            style="width:100%; height:300px; border:none; background:white;">
+        </canvas>
+		
+		<div id="legend-trajectoires" class="legend-trajectoires">
+			<div>
+				<span class="legend-line blue"></span>
+				pH₀ = 0.75
+			</div>
+			<div>
+				<span class="legend-line green"></span>
+				pH₀ = 0.9
+			</div>
+			<div>
+				<span class="legend-line red"></span>
+				pH₀ = 1
+			</div>
+		</div>
+		
+        <div id="precip-warning"
+            style="display:none; color:#b30000; margin-top:10px; font-weight:bold;">
+
+            ⚠ Précipitation Fe(OH)₃ possible
+
+        </div>
+
+    </div>
+
+    <!-- ENCADRÉ pH -->
+    <di<div class="encadre ph-box">
+
+    <div class="section-title">
+        Importance du pH lors du dosage
+    </div>
+
+    <div class="equations">
+
+        <p>
+            La réaction de dosage consomme une grande quantité d’ions H₃O⁺.
+        </p>
+
+        <div>
+            MnO₄⁻ + 5 Fe²⁺ + 8 H₃O⁺ → Mn²⁺ + 5 Fe³⁺ + 12 H₂O
+        </div>
+
+        <p>
+            Des réactions parasites peuvent avoir lieu en fonction du pH.
+        </p>
+
+        <div class="reaction-line">
+    <span class="number">1.</span>
+    <span>
+        Fe³⁺ + 3 OH⁻ → Fe(OH)₃(s)
+    </span>
+    <span class="ks">
+        K<sub>s</sub> = 10<sup>−38</sup>
+    </span>
+</div>
+
+<div class="reaction-line">
+    <span class="number">2.</span>
+    <span>
+        Fe²⁺ + 2 OH⁻ → Fe(OH)₂(s)
+    </span>
+    <span class="ks">
+        K<sub>s</sub> = 10<sup>−15</sup>
+    </span>
+</div>
+
+<div class="reaction-line">
+    <span class="number">3.</span>
+    <span>
+        Mn²⁺ + 2 OH⁻ → Mn(OH)₂(s)
+    </span>
+    <span class="ks">
+        K<sub>s</sub> = 10<sup>−13</sup>
+    </span>
+</div>
+
+    </div>
+
+    <p>
+        Le milieu doit donc rester suffisamment acide afin :
+    </p>
+
+    <ul>
+        <li>
+            d’éviter que les ions H₃O⁺ deviennent limitants
+            (pH₀ < 1) ;
+        </li>
+
+        <li>
+            d’empêcher la précipitation des hydroxydes de fer
+            (pH < 0.9).
+        </li>
+    </ul>
+
+    <div class="highlight">
+
+        <b>⚡ Conséquence expérimentale :</b>
+
+        Le dosage Fe²⁺/MnO₄⁻ est généralement réalisé
+        en présence d’un excès d’acide sulfurique afin de
+        maintenir un pH suffisamment faible pendant toute
+        la transformation.
+
+    </div>
+
+</div>
+
+</div>
+
+</body>
+<script>
+// =============================================
+// PARAMÈTRES ÉLECTROCHIMIQUES (identiques Python)
+// =============================================
+const E0_Fe  = 0.77;
+const E0_Mn  = 1.51;
+const eta_Mn = 0.3;
+const E0_H   = 0.0;
+const eta_H  = 0.0;
+const E0_O2  = 1.23;
+const eta_O2 = 0.5;
+const k   = 20;
+const i0  = 5e-4;
+const K   = 0.2;
+
+const C2_i = 1e-2, C2_f = 1e-6;
+
+const C_H0      = 1.0;
+const C_Fe2_init = 1.2e-2;
+const C_MnO4_init = 2.0e-2;
+
+const V0    = 50.0;
+const V0_L  = V0 / 1000;
+
+const n_Fe2_init = C_Fe2_init * V0_L;
+const nH0init    = C_H0 * V0_L;
+
+const n_MnO4_eq = n_Fe2_init / 5;
+const V_eq = (n_MnO4_eq / C_MnO4_init) * 1000; // mL
+
+// axe potentiel
+const xmin = -0.5, xmax = 2.0;
+const ymin = -50,  ymax = 50;
+const N = 600;
+const E_arr = Array.from({length: N}, (_, i) => xmin + i * (xmax - xmin) / (N - 1));
+
+// alpha limite (pH = 2)
+const alpha_lim = (C_H0 - 1e-2) / (8 * C2_i);
+
+// =============================================
+// CALCUL DE LA COURBE DE TITRAGE
+// =============================================
+const V_vals = Array.from({length: 400}, (_, i) => i * (2*V_eq) / 399);
+const E_titrage = V_vals.map(V_i => {
+  if (V_i <= V_eq) {
+    const n_MnO4 = C_MnO4_init * (V_i/1000);
+    const n_Fe2  = n_Fe2_init - 5*n_MnO4;
+    const n_Fe3  = 5*n_MnO4;
+    const V_total = (V0 + V_i)/1000;
+    const C2 = Math.max(n_Fe2/V_total, 1e-6);
+    const C3 = Math.max(n_Fe3/V_total, 1e-6);
+    return E0_Fe + 0.059*Math.log10(C3/C2);
+  } else {
+    const n_MnO4_total = C_MnO4_init * (V_i/1000);
+    const n_MnO4_exc   = n_MnO4_total - n_MnO4_eq;
+    const V_total = (V0 + V_i)/1000;
+    const C_MnO4 = Math.max(n_MnO4_exc/V_total, 1e-6);
+    const C_Mn2 = n_MnO4_eq / V_total;
+    return (E0_Mn - eta_Mn) + (0.059/5)*Math.log10(C_MnO4/C_Mn2);
+  }
+});
+
+// =============================================
+// CHART.JS — COURBE DE TITRAGE
+// =============================================
+const ctxTitrage = document.getElementById('chart-titrage').getContext('2d');
+const titrageData = V_vals.map((v, i) => ({x: v, y: E_titrage[i]}));
+
+const chartTitrage=new Chart(ctxTitrage,{
+
+  type:'line',
+
+  data:{
+    datasets:[
+
+      {
+        label:'E = f(V)',
+        data:titrageData,
+        borderColor:'#3366cc',
+        borderWidth:2,
+        pointRadius:0,
+        tension:0
+      },
+
+      {
+        label:'Point actuel',
+        data:[],
+        borderColor:'red',
+        backgroundColor:'red',
+        pointRadius:6,
+        pointStyle:'circle',
+        showLine:false
+      },
+
+      {
+        label:'Points particuliers',
+        data:[],
+        showLine:false,
+        pointRadius:4,
+        pointHoverRadius:5,
+        pointBackgroundColor:'#6b21a8'
+      },
+
+      {
+        label:'Traits construction',
+        data:[],
+        borderColor:'#6b21a8',
+        borderWidth:1,
+        borderDash:[3,3],
+        pointRadius:0,
+        showLine:true,
+        spanGaps:false
+      }
+
+    ]
+  },
+
+  options:{
+
+    animation:false,
+    responsive:true,
+
+    plugins:{
+
+      legend:{display:false},
+
+      annotation:{
+        annotations:{
+
+          txtVhalf:{
+            type:'label',
+            xValue:V_eq/2-0.4,
+            yValue:0.62,
+            content:['V½eq'],
+            color:'#6b21a8',
+            backgroundColor:'rgba(0,0,0,0)',
+            font:{size:12},
+            display:false
+          },
+
+          txtVeq:{
+            type:'label',
+            xValue:V_eq-0.4,
+            yValue:0.62,
+            content:['Veq'],
+            color:'#6b21a8',
+            backgroundColor:'rgba(0,0,0,0)',
+            font:{size:12},
+            display:false
+          },
+
+          txt2Veq:{
+            type:'label',
+            xValue:2*V_eq-0.4,
+            yValue:0.62,
+            content:['2Veq'],
+            color:'#6b21a8',
+            backgroundColor:'rgba(0,0,0,0)',
+            font:{size:12},
+            display:false
+          },
+
+          txtEVhalf:{
+            type:'label',
+            xValue:0,
+            yValue:E0_Fe+0.06,
+            position:'start',
+            content:['E°(Fe³⁺/Fe²⁺)'],
+            color:'#6b21a8',
+            backgroundColor:'rgba(0,0,0,0)',
+            font:{size:12},
+            display:false
+          },
+
+          txtEVeq:{
+            type:'label',
+            xValue:0,
+            yValue:(E0_Fe+E0_Mn-eta_Mn)/2+0.06,
+            position:'start',
+            content:['E(Veq)'],
+            color:'#6b21a8',
+            backgroundColor:'rgba(0,0,0,0)',
+            font:{size:12},
+            display:false
+          },
+
+          txtE2Veq:{
+            type:'label',
+            xValue:0,
+            yValue:E0_Mn-eta_Mn+0.06,
+            position:'start',
+            content:['E°(MnO₄⁻/Mn²⁺)'],
+            color:'#6b21a8',
+            backgroundColor:'rgba(0,0,0,0)',
+            font:{size:12},
+            display:false
+          }
+
+        }
+      }
+    },
+
+    scales:{
+
+      x:{
+        type:'linear',
+        min:0,
+        max:12,
+
+        title:{
+          display:true,
+          text:'Volume (mL)',
+          font:{size:14}
+        },
+
+        grid:{
+
+          drawOnChartArea:true,
+          drawTicks:false,
+          tickLength:8,
+
+          color:ctx=>{
+
+            const v=ctx.tick.value;
+
+            if(v===0) return '#000';
+            if(v===12) return '#000';
+
+            return v%1===0 ? '#888' : '#ddd';
+          },
+
+          lineWidth:ctx=>{
+
+            const v=ctx.tick.value;
+
+            if(v===0) return 1;
+            if(v===12) return 1;
+
+            return v%1===0 ? 0.5 : 0.5;
+          }
+        },
+
+        ticks:{
+          stepSize:0.2,
+          font:{size:12},
+          drawTicks:true,
+          tickLength:8,
+          maxRotation:0,
+          minRotation:0,
+          autoSkip:false,
+
+          callback:v=>
+            v%1===0
+              ? v.toFixed(1)
+              : ''
+        }
+      },
+
+      y:{
+        min:0.6,
+        max:1.3,
+
+        title:{
+          display:true,
+          text:'Potentiel E (V)',
+          font:{size:14}
+        },
+
+        grid:{
+
+          drawOnChartArea:true,
+          drawTicks:false,
+          tickLength:8,
+
+          color:ctx=>{
+
+            const v=ctx.tick.value;
+            const n=Math.round((v-0.6)*10);
+
+            if(Math.abs(v-0.6)<1e-6) return '#000';
+            if(Math.abs(v-1.3)<1e-6) return '#000';
+
+            return n%2===0
+              ? '#888'
+              : '#ddd';
+          },
+
+          lineWidth:ctx=>{
+
+            const v=ctx.tick.value;
+            const n=Math.round((v-0.6)*10);
+
+            if(Math.abs(v-0.6)<1e-6) return 1;
+            if(Math.abs(v-1.3)<1e-6) return 1;
+
+            return n%2===0
+              ? 0.5
+              : 0.5;
+          }
+        },
+
+        ticks:{
+          stepSize:0.1,
+          font:{size:12},
+          drawTicks:true,
+          tickLength:8,
+
+          callback:v=>{
+
+            const n=Math.round((v-0.6)*10);
+
+            return n%2===0
+              ? v.toFixed(1)
+              : '';
+          }
+        }
+      }
+    }
+  }
+});
+
+const pointsParticuliers=[
+  {x:V_eq/2,y:E0_Fe,label:'½ équivalence'},
+  {x:V_eq,y:(E0_Fe+(E0_Mn-eta_Mn))/2,label:'Équivalence'},
+  {x:2*V_eq,y:E_titrage[E_titrage.length-1],label:'2 Veq'}
+];
+
+let pointsVisibles=false;
+const btn=document.getElementById('btn-points');
+
+btn.addEventListener('click',()=>{
+
+  pointsVisibles=!pointsVisibles;
+
+chartTitrage.data.datasets[2].data=
+  pointsVisibles ? pointsParticuliers : [];
+
+chartTitrage.data.datasets[3].data=
+  pointsVisibles ? traitsConstruction : [];
+
+  const ann=chartTitrage.options.plugins.annotation.annotations;
+
+  ann.txtVhalf.display=pointsVisibles;
+  ann.txtVeq.display=pointsVisibles;
+  ann.txt2Veq.display=pointsVisibles;
+
+  ann.txtEVhalf.display=pointsVisibles;
+  ann.txtEVeq.display=pointsVisibles;
+  ann.txtE2Veq.display=pointsVisibles;
+
+  btn.textContent=
+    pointsVisibles
+    ? 'Cacher les points particuliers'
+    : 'Afficher les points particuliers';
+
+  chartTitrage.update();
+
+});
+
+const traitsConstruction=[
+
+  // demi-équivalence
+  {x:V_eq/2,y:0.6},
+  {x:V_eq/2,y:E0_Fe},
+  {x:0,y:E0_Fe},
+  {x:V_eq/2,y:E0_Fe},
+
+  // séparation
+  {x:NaN,y:NaN},
+
+  // équivalence
+  {x:V_eq,y:0.6},
+  {x:V_eq,y:(E0_Fe+(E0_Mn-eta_Mn))/2},
+  {x:0,y:(E0_Fe+(E0_Mn-eta_Mn))/2},
+  {x:V_eq,y:(E0_Fe+(E0_Mn-eta_Mn))/2},
+
+  // séparation
+  {x:NaN,y:NaN},
+
+  // 2Veq
+  {x:2*V_eq,y:0.6},
+  {x:2*V_eq,y:E_titrage[E_titrage.length-1]},
+  {x:0,y:E_titrage[E_titrage.length-1]},
+  {x:2*V_eq,y:E_titrage[E_titrage.length-1]}
+];
+
+// =============================================
+// CHART.JS — COURBE POLARISATION
+// =============================================
+const ctxPol = document.getElementById('chart-polarisation').getContext('2d');
+
+const chartPol = new Chart(ctxPol, {
+  type: 'line',
+  data: {
+    datasets: [
+      { label:'H⁺→H₂', data:[], borderColor:'#3366cc', borderWidth:2, borderDash:[6,4], pointRadius:0 },
+      { label:'Fe³⁺→Fe²⁺', data:[], borderColor:'#e07b00', borderWidth:2, pointRadius:0 },
+      { label:'MnO₄⁻→Mn²⁺', data:[], borderColor:'#9933cc', borderWidth:2, pointRadius:0 },
+      { label:'', data:[], borderColor:'#e07b00', borderWidth:2, pointRadius:0 },
+      { label:'Fe²⁺→Fe³⁺', data:[], borderColor:'#cc2222', borderWidth:2, pointRadius:0 },
+      { label:'', data:[], borderColor:'#cc2222', borderWidth:2, pointRadius:0 },
+      { label:'H₂O→O₂', data:[], borderColor:'#222', borderWidth:2, borderDash:[6,4], pointRadius:0 },
+      { label:'', data:[], borderColor:'rgba(0,0,0,0.5)', borderWidth:1.5, borderDash:[3,3], pointRadius:0 }
+    ]
+  },
+
+  options: {
+    animation: false,
+    responsive: true,
+    maintainAspectRatio: false,   // ← indispensable
+
+    plugins: {
+      legend: { display: false },
+      annotation: { annotations: {
+	deltaE:{
+		type:'line',
+		xMin:0,
+		xMax:0,
+		yMin:32,
+		yMax:32,
+
+		borderColor:'#cc2222',
+		borderWidth:1,
+
+		arrowHeads:{
+			start:{
+			display:true,
+			fill:false,
+			width:4,
+			length:6
+			},
+
+			end:{
+			display:true,
+			fill:false,
+			width:4,
+			length:6
+			}
+		},
+
+		label:{
+			display:true,
+			content:['ΔE'],
+			position:'center',
+			yAdjust:0,
+			backgroundColor:'rgba(0,0,0,0)',
+			color:'#cc2222',
+			font:{
+			size:12,
+			weight:'normal'
+			}
+		}
+		}} }
+
+    },   // ← ICI on ferme le bloc plugins correctement
+
+    scales: {
+      x: {
+	type: 'linear',
+        min: xmin,
+        max: xmax,
+	border: {
+    		display: true,
+    		color: '#888',   // même couleur que les lignes principales
+    		width: 1.2
+	},	
+
+        title: {
+          display: true,
+          text: 'Potentiel E (V)',
+	  padding: { top: -4 },
+          font: { size: 14 }
+        },
+
+        grid: {
+          drawOnChartArea: true,
+          drawTicks: false,
+          tickLength: 8,
+
+          color: ctx => {
+            const v = ctx.tick.value;
+            if (v === 0) return '#000';
+
+	    if (v === 2) return '#000';
+            if (v % 0.5 === 0) return '#888';
+            return '#ddd';
+          },
+
+          lineWidth: ctx => {
+            const v = ctx.tick.value;
+            if (v === 0) return 1.5;
+	    if (v === xmax) return 1;
+            if (v % 0.5 === 0) return 0.5;
+
+            return 0.5;
+          }
+        },
+
+        ticks: {
+          stepSize: 0.1,
+	  font: { size: 12 },
+          drawTicks: true,
+          tickLength: 8,
+	  maxRotation: 0,   // NE PERMET JAMAIS de tourner
+    	  minRotation: 0,   // idem
+    	  autoSkip: false,    // ne supprime pas les labels
+
+          callback: v => (v % 0.5 === 0 ? v.toFixed(1) : '')
+        }
+      },
+
+
+
+      y: {
+        min: ymin,
+        max: ymax,
+	border: {
+    		display: true,
+    		color: '#888',   // même couleur que les lignes principales
+    		width: 1.2
+	},
+
+        title: {
+          display: true,
+          text: 'Courant i (mA)',
+          font: { size: 14 }
+        },
+
+        grid: {
+          drawOnChartArea: true,
+          drawTicks: false,
+          tickLength: 8,
+
+          color: ctx => {
+            const v = ctx.tick.value;
+            if (v === 0) return '#000';
+            if (v === ymax) return '#000';
+            if (v % 20 === 0) return '#888';
+            return '#ddd';
+          },
+
+          lineWidth: ctx => {
+            const v = ctx.tick.value;
+            if (v === 0) return 1.5;
+            if (v === ymax) return 1;
+            if (v % 20 === 0) return 0.5;
+            return 0.5;
+          }
+        },
+
+        ticks: {
+          stepSize: 5,
+          font: { size: 12 },
+          drawTicks: true,
+          tickLength: 8,
+          callback: v => (v % 20 === 0 ? v : '')
+        }
+      }
+    }
+  }
+});
+
+// =============================================
+// FONCTIONS UTILITAIRES
+// =============================================
+function linspace(a, b, n) {
+  return Array.from({length:n}, (_,i) => a + i*(b-a)/(n-1));
+}
+
+function tanh(x) { return Math.tanh(x); }
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function toPoints(E, I, filterNear0 = true) {
+  const pts = [];
+  for (let i = 0; i < E.length; i++) {
+    const iv = I[i];
+    if (filterNear0 && Math.abs(iv) < 1e-3) continue;
+    if (!isFinite(iv)) continue;
+    pts.push({x: E[i], y: iv});
+  }
+  return pts;
+}
+
+
+ 
+// =============================================
+// POURBAIX
+// =============================================
+  
+  let historiquePourbaix = [];
+  let traj05 = [];
+  let traj1  = [];
+  let traj15  = [];
+
+let showTrajectoires = false;
+  
+  let pointPourbaix = {
+    pH: 0,
+    E: 0
+	};
+  
+// ======================================
+// CALCUL TRAJECTOIRE pH/E
+// ======================================
+
+function calcTrajectoire(pH_initial){
+
+    let traj = [];
+
+    const C_H_initial = Math.pow(10, -pH_initial);
+
+    const nH_initial = C_H_initial * V0_L;
+
+    for(let V = 0; V <= 2*V_eq; V += 0.05){
+
+        const alpha = V / V_eq;
+
+        const V_total = (V0 + V)/1000;
+
+        let C_H;
+
+        if(alpha <= 1){
+
+            C_H =
+                (nH_initial - 8*n_Fe2_init*alpha)
+                / V_total;
+
+        } else {
+
+            C_H =
+                (nH_initial - 8*n_Fe2_init)
+                / V_total;
+        }
+
+        C_H = Math.max(C_H, 1e-14);
+
+        const pH = -Math.log10(C_H);
+
+        let E;
+
+        if(V <= V_eq){
+
+            const n_MnO4 =
+                C_MnO4_init * (V/1000);
+
+            const n_Fe2 =
+                n_Fe2_init - 5*n_MnO4;
+
+            const n_Fe3 =
+                5*n_MnO4;
+
+            const C2 =
+                Math.max(n_Fe2/V_total,1e-6);
+
+            const C3 =
+                Math.max(n_Fe3/V_total,1e-6);
+
+            E =
+                E0_Fe
+                + 0.059*Math.log10(C3/C2);
+
+        } else {
+
+            const n_MnO4_total =
+                C_MnO4_init * (V/1000);
+
+            const n_MnO4_exc =
+                n_MnO4_total - n_MnO4_eq;
+
+            const C_MnO4 =
+                Math.max(n_MnO4_exc/V_total,1e-6);
+
+            const C_Mn2 =
+                n_MnO4_eq / V_total;
+
+            E =
+                (E0_Mn - eta_Mn)
+                + (0.059/5)
+                * Math.log10(C_MnO4/C_Mn2);
+        }
+
+        traj.push({
+            pH: pH,
+            E: E
+        });
+    }
+
+    return traj;
+}
+  
+function drawPourbaixStatic() {
+
+    const canvas = document.getElementById("pourbaix");
+    const ctx = canvas.getContext("2d");
+
+    // Dimensions adaptées
+    const W = canvas.width;      // 800
+    const H = canvas.height;     // 300
+
+    // Marges
+    const left = 60;
+    const right = 20;
+    const top = 20;
+    const bottom = 40;
+
+    // Domaine
+    const pHmin = 0, pHmax = 14;
+    const Emin = -1.0, Emax = 2.0;
+
+    // Fonctions conversion coordonnées
+    function X(pH) {
+        return left + (pH - pHmin) / (pHmax - pHmin) * (W - left - right);
+    }
+    function Y(E) {
+        return top + (Emax - E) / (Emax - Emin) * (H - top - bottom);
+    }
+	
+// ======================================
+// DESSIN TRAJECTOIRE
+// ======================================
+
+function drawTrajectoire(points, color){
+
+    ctx.save();
+
+    ctx.strokeStyle = color;
+
+    ctx.lineWidth = 2;
+
+    ctx.globalAlpha = 0.75;
+
+    ctx.beginPath();
+
+    for(let i=0; i<points.length; i++){
+
+        const p = points[i];
+
+        const x = X(p.pH);
+
+        const y = Y(p.E);
+
+        if(i===0){
+            ctx.moveTo(x,y);
+        } else {
+            ctx.lineTo(x,y);
+        }
+    }
+
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+    // Constantes chimiques
+    const cFe = 0.01;
+    const E0_Fe2_Fe = -0.440;
+    const E0_Fe3_Fe2 = 0.771;
+
+    const Ks_FeOH2 = Math.pow(10, -14.2);
+    const Ks_FeOH3 = Math.pow(10, -38.0);
+
+    const k = 0.0591;
+
+    function log10(x) { return Math.log(x) / Math.LN10; }
+
+    // Courbes eau
+    function E_H2(pH) { return -k * pH; }
+    function E_O2(pH) { return 1.229 - k * pH; }
+
+    // Frontières Fe
+    const eFe2Fe = E0_Fe2_Fe + (k / 2) * log10(cFe);
+    const eFe3Fe2 = E0_Fe3_Fe2 + k * log10(cFe / cFe);
+
+    const pH2 = 14 + 0.5 * log10(Ks_FeOH2 / cFe);
+    const pH3 = 14 + (1 / 3) * log10(Ks_FeOH3 / cFe);
+
+    function E_FeOH2_Fe(pH) {
+        return E0_Fe2_Fe + (k/2)*log10(Ks_FeOH2) + k*(14 - pH);
+    }
+    function E_FeOH3_Fe2(pH) {
+        return E0_Fe3_Fe2 + k*log10(Ks_FeOH3 / cFe) + 3*k*(14-pH);
+    }
+    function E_FeOH3_FeOH2(pH) {
+        return E0_Fe3_Fe2 + k*log10(Ks_FeOH3 / Ks_FeOH2) + k*(14-pH);
+
+    }
+
+    // ================================
+    // 1. Fond blanc
+    // ================================
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, W, H);
+
+    // ================================
+    // 2. Grille
+    // ================================
+    for (let pH = 0; pH <= 14; pH += 1) {
+		if (pH === 0) continue;
+        ctx.beginPath();
+        ctx.strokeStyle = "#dddddd";
+        ctx.moveTo(X(pH), Y(Emin));
+        ctx.lineTo(X(pH), Y(Emax));
+        ctx.stroke();
+    }
+    for (let E = -1; E <= 2; E += 0.5) {
+	if (Math.abs(E - Emin) < 1e-6) continue;
+        ctx.beginPath();
+        ctx.strokeStyle = "#dddddd";
+        ctx.moveTo(X(0), Y(E));
+        ctx.lineTo(X(14), Y(E));
+        ctx.stroke();
+    }
+
+    // ================================
+    // 3. Zones colorées (Comme original)
+    // ================================
+
+    function poly(points, color, alpha=0.35){
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(X(points[0].pH), Y(points[0].E));
+        for(let i=1;i<points.length;i++){
+            ctx.lineTo(X(points[i].pH), Y(points[i].E));
+        }
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    // Zone Fe3+
+    poly([
+        {pH:0,    E:Emax},
+        {pH:pH3,  E:Emax},
+        {pH:pH3,  E:eFe3Fe2},
+        {pH:0,    E:eFe3Fe2},
+    ], "#e8b65d", 0.45);
+
+    // Zone Fe(OH)3
+    poly([
+        {pH:pH3,   E:Emax},
+        {pH:pHmax, E:Emax},
+        {pH:pHmax, E:E_FeOH3_FeOH2(pHmax)},
+        {pH:pH2,   E:E_FeOH3_FeOH2(pH2)},
+        {pH:pH3,   E:eFe3Fe2}
+    ], "#e8846c", 0.40);
+
+    // Zone Fe2+
+    poly([
+        {pH:0,    E:eFe3Fe2},
+        {pH:pH3,  E:eFe3Fe2},
+        {pH:pH2,  E:E_FeOH3_Fe2(pH2)},
+        {pH:pH2,  E:eFe2Fe},
+        {pH:0,    E:eFe2Fe}
+    ], "#a8d47b", 0.45);
+
+    // Métal Fe
+    poly([
+        {pH:0,    E:Emin},
+        {pH:14,   E:Emin},
+        {pH:14,   E:E_FeOH2_Fe(14)},
+        {pH:pH2,  E:E_FeOH2_Fe(pH2)},
+        {pH:pH2,  E:eFe2Fe},
+        {pH:0,    E:eFe2Fe}
+    ], "#bcbcbc", 0.45);
+
+    // Zone Fe(OH)₂
+    poly([
+        {pH:pH2,   E:E_FeOH2_Fe(pH2)},
+        {pH:pHmax, E:E_FeOH2_Fe(pHmax)},
+        {pH:pHmax, E:E_FeOH3_FeOH2(pHmax)},
+        {pH:pH2,   E:E_FeOH3_FeOH2(pH2)}
+    ], "#75c98b", 0.40);
+
+    // ================================
+    // 4. Courbes eau
+    // ================================
+    function curve(fun, color){
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        const N = 300;
+        for(let i=0;i<=N;i++){
+            let pH = pHmin + (pHmax-pHmin)*(i/N);
+            let E = fun(pH);
+            if(i===0) ctx.moveTo(X(pH),Y(E));
+            else ctx.lineTo(X(pH),Y(E));
+        }
+        ctx.stroke();
+    }
+
+    ctx.setLineDash([6,4]);
+    curve(E_H2, "#1f5fbf");
+    curve(E_O2, "#1f5fbf");
+    ctx.setLineDash([]);
+
+    // ================================
+    // 5. Frontières Fe
+    // ================================
+    function segment(x1,y1,x2,y2,color,width=2){
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = width;
+        ctx.moveTo(X(x1),Y(y1));
+        ctx.lineTo(X(x2),Y(y2));
+        ctx.stroke();
+    }
+
+    // Fe3+ / Fe2+
+    segment(0, eFe3Fe2, pH3, eFe3Fe2, "#272235", 2);
+    segment(pH3, eFe3Fe2, pH3, Emax, "#272235", 2);
+
+    // Fe2+ / Fe
+    segment(0, eFe2Fe, pH2, eFe2Fe, "#272235", 2);
+	
+	// Fe2+ / Fe(OH)2
+	segment(
+    pH2,
+    eFe2Fe,
+    pH2,
+    E_FeOH3_FeOH2(pH2),
+    "#272235",
+    2
+);
+
+    // Fe(OH)2 / Fe
+    ctx.beginPath();
+    ctx.strokeStyle="#272235";
+    ctx.lineWidth=2;
+    let N2 = 300;
+    for(let i=0;i<=N2;i++){
+        let pH = pH2 + (14-pH2)*(i/N2);
+        ctx.lineTo(X(pH), Y(E_FeOH2_Fe(pH)));
+    }
+    ctx.stroke();
+
+    // Fe(OH)3 / Fe2+
+    ctx.beginPath();
+    ctx.strokeStyle="#272235";
+    ctx.lineWidth=2;
+    for(let i=0;i<=N2;i++){
+        let pH = pH3 + (pH2-pH3)*(i/N2);
+        ctx.lineTo(X(pH), Y(E_FeOH3_Fe2(pH)));
+    }
+    ctx.stroke();
+
+    // Fe(OH)3 / Fe(OH)2
+    ctx.beginPath();
+    ctx.strokeStyle="#272235";
+    ctx.lineWidth=2;
+    for(let i=0;i<=N2;i++){
+        let pH = pH2 + (14-pH2)*(i/N2);
+        ctx.lineTo(X(pH), Y(E_FeOH3_FeOH2(pH)));
+    }
+    ctx.stroke();
+	
+	
+
+    // ================================
+    // 6. Axes
+    // ================================
+    ctx.strokeStyle = "#000";
+	ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(Emin));
+    ctx.lineTo(X(14), Y(Emin));
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(Emin));
+    ctx.lineTo(X(0), Y(Emax));
+    ctx.stroke();
+
+    // Ticks pH
+    ctx.fillStyle = "#222";
+    ctx.font = "12px sans-serif";
+    for(let pH=0;pH<=14;pH++){
+        ctx.fillText(pH.toString(), X(pH)-3, Y(Emin)+20);
+    }
+
+    // Ticks E
+    ctx.textAlign = "right";
+    for(let E=-1;E<=2;E+=0.5){
+        ctx.fillText(E.toFixed(1), X(0)-8, Y(E)+4);
+    }
+
+    // Labels
+    ctx.textAlign="center";
+    ctx.fillText("pH", X(7), H-10);
+
+    ctx.save();
+    ctx.translate(20, Y(0.5));
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText("E (V vs SHE)", 0, 0);
+    ctx.restore();
+
+    // Zones labels
+    ctx.fillStyle="#8a4d00";
+    ctx.fillText("Fe³⁺", X(1), Y(1.3));
+
+    ctx.fillStyle="#3d621e";
+    ctx.fillText("Fe²⁺", X(3), Y(0.15));
+
+    ctx.fillStyle="#8b2600";
+    ctx.fillText("Fe(OH)₃", X(8.5), Y(1.0));
+
+    ctx.fillStyle="#555";
+    ctx.fillText("Fe (métal)", X(3.5), Y(-0.8));
+	
+	ctx.fillStyle = "#2e8b57";
+	ctx.fillText("Fe(OH)₂",X(10),Y(-0.55));
+	
+	// ======================================
+	// TRACE DU POINT
+	// ======================================
+
+	ctx.save();
+
+	ctx.strokeStyle = "rgba(220,0,0,0.6)";
+	ctx.lineWidth = 3;
+
+	ctx.beginPath();
+
+	for(let i=0;i<historiquePourbaix.length;i++){
+
+		const p = historiquePourbaix[i];
+
+		const x = X(p.pH);
+		const y = Y(p.E);
+
+		if(i===0){
+			ctx.moveTo(x,y);
+		} else {
+			ctx.lineTo(x,y);
+		}
+	}
+
+	ctx.stroke();
+
+	ctx.restore();
+	
+// ======================================
+// TRAJECTOIRES pH
+// ======================================
+
+if(showTrajectoires){
+
+    drawTrajectoire(traj05, "#3366cc");
+
+    drawTrajectoire(traj1, "#009966");
+
+    drawTrajectoire(traj15, "#cc2222");
+}
+	
+	// ======================================
+	// POINT DYNAMIQUE
+	// ======================================
+
+	ctx.save();
+
+	ctx.fillStyle = "red";
+	ctx.strokeStyle = "red";
+	ctx.lineWidth = 1;
+
+	ctx.beginPath();
+
+	ctx.arc(
+		X(pointPourbaix.pH),
+		Y(pointPourbaix.E),
+		6,
+		0,
+		2 * Math.PI
+	);
+
+	ctx.fill();
+	ctx.stroke();
+
+	ctx.restore();		
+		}
+  
+// ======================================
+// BOUTON TRAJECTOIRES
+// ======================================
+
+document.getElementById("btn-trajectoires")
+.addEventListener("click", () => {
+
+    showTrajectoires = !showTrajectoires;
+
+    const btn = document.getElementById("btn-trajectoires");
+
+    btn.textContent = showTrajectoires
+        ? "Masquer tracés E-pH"
+        : "Afficher tracés E-pH";
+		
+	document.getElementById("legend-trajectoires")
+	.style.display = showTrajectoires
+		? "block"
+		: "none";
+
+    drawPourbaixStatic();
+});
+
+   
+
+// =============================================
+// FONCTION UPDATE (identique à Python)
+// =============================================
+function update(V_raw) {
+  let reactionsVisibles=true;
+  let V = V_raw;
+  let alpha = V / V_eq;
+ 
+  // calcul pH test
+  const V_total_test = (V0 + V)/1000;
+  let C_H_test = alpha <= 1
+    ? (nH0init - 8 * n_Fe2_init * alpha) / V_total_test
+    : (nH0init - 8 * n_Fe2_init) / V_total_test;
+  C_H_test = Math.max(C_H_test, 1e-14);
+  const pH_test = -Math.log10(C_H_test);
+
+  let warningOn = false;
+  if (pH_test > 2) {
+    alpha = alpha_lim;
+    V = alpha_lim * V_eq;
+    warningOn = true;
+  }
+
+  // recalcul propre
+  const V_total = (V0 + V)/1000;
+  let C_H = alpha <= 1
+    ? (nH0init - 8 * n_Fe2_init * alpha) / V_total
+    : (nH0init - 8 * n_Fe2_init) / V_total;
+  C_H = Math.max(C_H, 1e-14);
+  const pH = -Math.log10(C_H);
+  
+
+  // courants initiaux
+  const i_cath = new Float64Array(N);
+  const i_anod = new Float64Array(N);
+
+  // H+ → H2 (cathodique parasite)
+  const E_H_eff = E0_H + eta_H - 0.059 * pH;
+  const i_H = new Float64Array(N);
+  for (let j = 0; j < N; j++) {
+    if (E_arr[j] < E_H_eff) {
+      i_H[j] = -i0*(Math.exp(-k*(E_arr[j]-E_H_eff)) - 1);
+    }
+  }
+  
+  
+  // H2O → O2 (anodique parasite)
+  const E_O2_eff = E0_O2 - 0.059 * pH + eta_O2;
+  const i_O2 = new Float64Array(N);
+  for (let j = 0; j < N; j++) {
+    if (E_arr[j] > E_O2_eff) {
+      i_O2[j] = i0*(Math.exp(k*(E_arr[j]-E_O2_eff)) - 1);
+    }
+  }
+
+  let E0, C_Fe2_conc, C_Fe3_conc, C_MnO4_conc, C_Mn2_conc;
+
+  if (V <= V_eq) {
+    // AVANT ÉQUIVALENCE
+    const n_MnO4 = C_MnO4_init * (V/1000);
+    const n_Fe2  = n_Fe2_init - 5*n_MnO4;
+    const n_Fe3  = 5*n_MnO4;
+
+    C_Fe2_conc = Math.max(n_Fe2/V_total, 1e-6);
+    C_Fe3_conc = Math.max(n_Fe3/V_total, 1e-6);
+    C_MnO4_conc = 0;
+    C_Mn2_conc = n_MnO4/V_total;
+
+    E0 = E0_Fe + 0.059*Math.log10(C_Fe3_conc/C_Fe2_conc);
+
+    const i_lim_c = -K * C_Fe3_conc;
+    const i_lim_a =  K * C_Fe2_conc;
+
+    for (let j = 0; j < N; j++) {
+      if (E_arr[j] < E0) {
+        const i_raw = -i0*(Math.exp(-k*(E_arr[j]-E0)) - 1);
+        i_cath[j] = i_lim_c * tanh(i_raw/i_lim_c);
+      }
+      if (E_arr[j] > E0) {
+        const i_raw = i0*(Math.exp(k*(E_arr[j]-E0)) - 1);
+        i_anod[j] = i_lim_a * tanh(i_raw/i_lim_a);
+      }
+    }
+
+  } else {
+    // APRÈS ÉQUIVALENCE
+    const n_Fe3_t = n_Fe2_init;
+    C_Fe3_conc = n_Fe3_t / V_total;
+    C_Fe2_conc = 0;
+
+    const n_MnO4_total = C_MnO4_init * (V/1000);
+    const n_MnO4_exc   = n_MnO4_total - n_MnO4_eq;
+    C_MnO4_conc = Math.max(n_MnO4_exc/V_total, 1e-6);
+    C_Mn2_conc  = n_MnO4_eq / V_total;
+
+    E0 = (E0_Mn - eta_Mn) + (0.059/5)*Math.log10(C_MnO4_conc/C_Mn2_conc);
+
+    const i_lim_Fe = -K * C_Fe3_conc;
+    const E_lim = E0_Fe + 0.06*Math.log10(1e4);
+
+    const i_Fe_arr = new Float64Array(N);
+    for (let j = 0; j < N; j++) {
+      if (E_arr[j] < E_lim) {
+        const i_raw = -i0*(Math.exp(-k*(E_arr[j]-E_lim)) - 1);
+        i_Fe_arr[j] = i_lim_Fe * tanh(i_raw/i_lim_Fe);
+      }
+    }
+
+    const i_lim_Mn = -K * C_MnO4_conc * 5;
+    const i_Mn_arr = new Float64Array(N);
+    for (let j = 0; j < N; j++) {
+      if (E_arr[j] < E0) {
+        const i_raw = -i0*(Math.exp(-k*(E_arr[j]-E0)) - 1);
+        i_Mn_arr[j] = i_lim_Mn * tanh(i_raw/i_lim_Mn);
+      }
+    }
+
+    for (let j = 0; j < N; j++) {
+      i_cath[j] = i_Fe_arr[j] + i_Mn_arr[j];
+    }
+  }
+
+  // Ajout parasites
+  for (let j = 0; j < N; j++) {
+    i_cath[j] += i_H[j];
+    i_anod[j] += i_O2[j];
+  }
+
+  // Mise à l'échelle (×1000×10 comme Python)
+  for (let j = 0; j < N; j++) {
+    i_cath[j] *= 1000*10;
+    i_anod[j] *= 1000*10;
+  }
+
+  // Nettoyage quasi-zéro
+  for (let j = 0; j < N; j++) {
+    if (Math.abs(i_cath[j]) < 1e-3) i_cath[j] = NaN;
+    if (Math.abs(i_anod[j]) < 1e-3) i_anod[j] = NaN;
+  }
+  
+    pointPourbaix.pH = pH;  // petite bidouille pour rattrapper le decalage du point
+	pointPourbaix.E  = E0;	// petite bidouille pour rattrapper le decalage du point
+
+  // ============================================
+  // DÉCOUPAGE COULEURS CATHODIQUE
+  // ============================================
+  const E_H_eff2 = E0_H + eta_H - 0.059 * pH;
+  const E_lim2 = E0_Fe + 0.06*Math.log10(1e4);
+
+  const pts_cath_neg = [], pts_cath_mid = [], pts_cath_mid2 = [], pts_cath_pos = [];
+
+  for (let j = 0; j < N; j++) {
+    const e = E_arr[j];
+    const iv = i_cath[j];
+    if (!isFinite(iv) || isNaN(iv)) continue;
+
+    const mask_neg  = e < E_H_eff2;
+    const mask_mid2 = (e >= E_lim2) && (e <= E0) && (iv < 0);
+    const mask_mid  = (e >= E_H_eff2) && (e < E0) && !mask_mid2;
+    const mask_pos  = (e >= E0) && !mask_mid2;
+
+    if (mask_neg)  pts_cath_neg.push({x:e, y:iv});
+    if (mask_mid)  pts_cath_mid.push({x:e, y:iv});
+    if (mask_mid2) pts_cath_mid2.push({x:e, y:iv});
+    if (mask_pos)  pts_cath_pos.push({x:e, y:iv});
+  }
+
+  // ============================================
+  // DÉCOUPAGE COULEURS ANODIQUE
+  // ============================================
+  const pts_anod_low = [], pts_anod_mid = [], pts_anod_high = [];
+  for (let j = 0; j < N; j++) {
+    const e = E_arr[j];
+    const iv = i_anod[j];
+    if (!isFinite(iv) || isNaN(iv)) continue;
+
+    if (e < E0)                       pts_anod_low.push({x:e, y:iv});
+    else if (e >= E0 && e <= E_O2_eff) pts_anod_mid.push({x:e, y:iv});
+    else if (e > E_O2_eff)             pts_anod_high.push({x:e, y:iv});
+  }
+
+  // Ligne verticale E0
+  const vline_pts = [{x:E0, y:ymin},{x:E0, y:ymax}];
+
+  // Mise à jour des datasets
+  chartPol.data.datasets[0].data = pts_cath_neg;
+  chartPol.data.datasets[1].data = pts_cath_mid;
+  chartPol.data.datasets[2].data = pts_cath_mid2;
+  chartPol.data.datasets[3].data = pts_cath_pos;
+  chartPol.data.datasets[4].data = pts_anod_low;
+  chartPol.data.datasets[5].data = pts_anod_mid;
+  chartPol.data.datasets[6].data = pts_anod_high;
+  chartPol.data.datasets[7].data = vline_pts;
+  chartPol.options.plugins.annotation.annotations.deltaE.xMax=E0;
+  chartPol.options.plugins.annotation.annotations.deltaE.xMax=E0;
+
+	const txtPot=
+	V<=V_eq
+	? 'E(Fe³⁺/Fe²⁺)'
+	: 'E(MnO₄⁻/Mn²⁺)';
+  
+	chartPol.options.plugins.annotation.annotations.deltaE.label.content=[
+	'ΔE (courant nul)','',txtPot
+	];  
+	chartPol.update('none');
+	
+	if(reactionsVisibles){
+	  const ctx=chartPol.ctx;
+	  ctx.save();
+	  ctx.font='12px Arial';
+	  ctx.fillStyle='#e07b00';
+	  
+	  if(chartPol.data.datasets[1].data.length){
+		const pts=chartPol.data.datasets[1].data;
+		const frac=
+		  V<=V_eq
+		  ? 0.65
+		  : 0.70;
+		const p=pts[Math.floor(pts.length*frac)];
+		if(p && p.y<-1){
+		  const xPix=chartPol.scales.x.getPixelForValue(p.x);
+		  const yPix=chartPol.scales.y.getPixelForValue(p.y);
+		  ctx.fillText(
+			'Fe²⁺ ⟵ Fe³⁺',
+			xPix+20,
+			yPix-2
+		  );
+		}
+	  }
+	  
+	 if(chartPol.data.datasets[2].data.length){
+	  const pts=chartPol.data.datasets[2].data;
+	  const p=pts[10]
+	  if(p && p.y<-1){
+		const xPix=chartPol.scales.x.getPixelForValue(p.x);
+		const yPix=chartPol.scales.y.getPixelForValue(p.y);
+		ctx.fillStyle='#9933cc';
+		ctx.fillText(
+		  'MnO₄⁻ ⟵ Mn²⁺',
+		  xPix-15,
+		  yPix-2
+		);
+	  }
+	}
+
+	if(chartPol.data.datasets[5].data.length){
+	  const pts=chartPol.data.datasets[5].data;
+	   const p=pts[10]
+	   if(p && p.y>1){
+		const xPix=chartPol.scales.x.getPixelForValue(p.x);
+		const yPix=chartPol.scales.y.getPixelForValue(p.y);
+		ctx.fillStyle='#cc2222';
+		ctx.fillText(
+		  'Fe²⁺ ⟶ Fe³⁺',
+		  xPix-15,
+		  yPix-5
+		);
+	  }
+	}
+
+	if(chartPol.data.datasets[1].data.length){
+	  const pts=chartPol.data.datasets[1].data;
+	  const p=pts[5];
+	  const xPix=chartPol.scales.x.getPixelForValue(p.x);
+	  const yPix=chartPol.scales.y.getPixelForValue(p.y);
+	  ctx.fillStyle='#3366cc';
+	  ctx.fillText(
+		'H₂ ⟵ 2H⁺',
+		xPix-45,
+		yPix+30
+		);
+	 }
+
+	const xPix=chartPol.scales.x.getPixelForValue(1.8);
+	const yPix=chartPol.scales.y.getPixelForValue(31);
+
+	ctx.fillStyle='#222';
+
+	ctx.fillText(
+	  'H₂O ⟶ O₂',
+	  xPix-25,
+	  yPix-15
+	);
+
+  ctx.restore();
+}
+
+  // Point sur courbe de titrage
+  chartTitrage.data.datasets[1].data = [{x: V, y: E0}];
+  chartTitrage.update('none');
+
+  // ============================================
+  // MISE À JOUR DES INFOS TEXTUELLES
+  // ============================================
+  document.getElementById('e0-fe-display').textContent =  E0_Fe.toFixed(2);
+  document.getElementById('e0-mn-display').textContent =  E0_Mn.toFixed(2);
+  document.getElementById('e0-h2-display').textContent =  E0_H.toFixed(2);
+  document.getElementById('e0-o2-display').textContent =  E0_O2.toFixed(2);
+  document.getElementById('eta-mn-display').textContent =  eta_Mn.toFixed(2);
+  document.getElementById('eta-o2-display').textContent =  eta_O2.toFixed(2);
+  document.getElementById('val-E').textContent = E0.toFixed(2);
+  document.getElementById('val-pH').textContent = pH.toFixed(2);
+  document.getElementById('val-cfe2').textContent  = C_Fe2_conc.toExponential(2).replace('0.00e+0', '0')+ ' mol·L⁻¹';
+  document.getElementById('val-cfe3').textContent  = C_Fe3_conc.toExponential(2).replace('0.00e+0', '0')+ ' mol·L⁻¹';
+  document.getElementById('val-cmn2').textContent  = C_Mn2_conc.toExponential(2).replace('0.00e+0', '0')+ ' mol·L⁻¹';
+  document.getElementById('val-cmno4').textContent = C_MnO4_conc.toExponential(2).replace('0.00e+0', '0')+ ' mol·L⁻¹';
+
+  pointPourbaix.pH = pH;
+  pointPourbaix.E  = E0;
+  
+  historiquePourbaix = [];
+
+for(let v = 0; v <= V; v += 0.02){
+
+    let alpha_tmp = v / V_eq;
+
+    let V_total_tmp = (V0 + v)/1000;
+
+    let C_H_tmp = alpha_tmp <= 1
+        ? (nH0init - 8 * n_Fe2_init * alpha_tmp) / V_total_tmp
+        : (nH0init - 8 * n_Fe2_init) / V_total_tmp;
+
+    C_H_tmp = Math.max(C_H_tmp, 1e-14);
+
+    let pH_tmp = -Math.log10(C_H_tmp);
+
+    let E_tmp;
+
+    if(v <= V_eq){
+
+        const n_MnO4 = C_MnO4_init * (v/1000);
+
+        const n_Fe2 = n_Fe2_init - 5*n_MnO4;
+        const n_Fe3 = 5*n_MnO4;
+
+        const C2 = Math.max(n_Fe2/V_total_tmp,1e-6);
+        const C3 = Math.max(n_Fe3/V_total_tmp,1e-6);
+
+        E_tmp = E0_Fe + 0.059*Math.log10(C3/C2);
+
+    } else {
+
+        const n_MnO4_total = C_MnO4_init * (v/1000);
+
+        const n_MnO4_exc = n_MnO4_total - n_MnO4_eq;
+
+        const C_MnO4 = Math.max(n_MnO4_exc/V_total_tmp,1e-6);
+
+        const C_Mn2 = n_MnO4_eq / V_total_tmp;
+
+        E_tmp = (E0_Mn - eta_Mn)
+              + (0.059/5)*Math.log10(C_MnO4/C_Mn2);
+    }
+
+    historiquePourbaix.push({
+        pH: pH_tmp,
+        E: E_tmp
+    });
+}
+  
+  drawPourbaixStatic();
+ 
+  // Warning précipitation
+  const wb = document.getElementById('precip-warning');
+  if (warningOn) { wb.style.display = 'block'; }
+  else           { wb.style.display = 'none';  }
+}
+
+// =============================================
+// SLIDER
+// =============================================
+const slider = document.getElementById('slider');
+const sliderDisplay = document.getElementById('slider-display');
+
+slider.max = (2 * V_eq).toFixed(4);
+slider.step = (2 * V_eq / 200).toFixed(4);
+slider.value = 0;
+
+slider.addEventListener('input', () => {
+  const V = parseFloat(slider.value);
+  sliderDisplay.textContent = V.toFixed(2) + ' mL';
+ 
+  update(V);
+});
+
+
+// Initialisation
+window.addEventListener("load", () => {
+    traj05 = calcTrajectoire(0.75);
+    traj1 = calcTrajectoire(0.90);
+    traj15 = calcTrajectoire(1);
+    drawPourbaixStatic();
+    update(0);
+});
+
+</script>
+</body>
+</html>
+<script>
