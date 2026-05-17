@@ -112,15 +112,38 @@ html, body {
 
 /* CARTES */
 .card {
-    display: inline-block;
+    position: relative; /* important */
+
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+
     width: 220px;
-    padding: 15px;
+    height: 180px;
+
+    padding: 15px 15px 15px 20px; /* 👈 plus à gauche */
+
     margin: 10px;
+
     background: white;
     border-radius: 8px;
     border: 1px solid #ddd;
+
     cursor: pointer;
     transition: 0.2s;
+}
+
+/* barre colorée à droite */
+
+.card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0; /* 👈 au lieu de right */
+    width: 6px;
+    height: 100%;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 
 .card:hover {
@@ -137,12 +160,25 @@ html, body {
     background: #34495e;
 }
 
+.card.avenir::after {
+    background: #d0d3d4; /* gris clair */
+}
+
+.card.bleu::after { background: #3498db; }        /* bleu */
+.card.orange::after { background: #e67e22; }      /* orange */
+.card.vert::after { background: #2ecc71; }        /* vert */
+.card.violet::after { background: #9b59b6; }      /* violet */
+.card.rouge::after { background: #e74c3c; }       /* rouge */
+
+
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
+<!-- =========================
+     HEADER
+     ========================= -->
 <div class="header">
     <h1 style="margin:0;">CFerreiraLab</h1>
     <p style="margin:5px 0 0;">
@@ -151,85 +187,136 @@ html, body {
 </div>
 
 <div class="container">
- 
-    <!-- MENU -->
-   <div class="sidebar">
 
-    <!-- MENU HAUT -->
-    <div>
-        <a data-section="accueil" onclick="show('accueil')">Accueil</a>
-    <div>
-<a data-section="electrochimie" onclick="openSection('electrochimie')">Electrochimie</a>
-    	<div id="submenu-electrochimie" class="submenu">
-<a data-section="potentiometrie" onclick="show('potentiometrie', this)">
-    Potentiométrie
-</a>	</div>
-	</div>
+    <!-- =========================
+         MENU LATÉRAL
+         ========================= -->
+    <div class="sidebar">
 
+        <!-- 🔹 MENU PRINCIPAL -->
+        <div>
 
-<a data-section="videos" onclick="show('videos')">Vidéos TP</a>
-<a data-section="maths" onclick="show('maths')">Maths</a>
+            <!-- Accueil -->
+            <a data-section="accueil" onclick="show('accueil')">
+                Accueil
+            </a>
+
+            <!-- Electrochimie -->
+            <div>
+                <a data-section="electrochimie" onclick="openSection('electrochimie')">
+                    Electrochimie
+                </a>
+
+                <!-- Sous-menu -->
+                <div id="submenu-electrochimie" class="submenu">
+                    <a data-section="potentiometrie" onclick="show('potentiometrie', this)">
+                        Potentiométrie
+                    </a>
+                </div>
+            </div>
+
+            <!-- Autres sections -->
+            <a data-section="videos" onclick="show('videos')">
+                Vidéos TP
+            </a>
+
+            <a data-section="maths" onclick="show('maths')">
+                Maths
+            </a>
+
+        </div>
+
+        <!-- 🔹 MENU BAS : CONTACT -->
+        <div class="contact-container">
+            <a data-section="contact" onclick="show('contact')">
+                Contact
+            </a>
+        </div>
+
     </div>
 
-    <!-- MENU BAS (CONTACT) -->
-    <div class="contact-container">
-<a data-section="contact" onclick="show('contact')">Contact</a>    </div>
+    <!-- =========================
+         ZONE DE CONTENU
+         ========================= -->
+    <div class="content" id="content"></div>
 
 </div>
-   <div class="content" id="content"></div>
-
-</div>
-
 <script>
 
+/* =========================
+   MAPPING DES SECTIONS
+   ========================= */
+
+// 🔹 Permet de relier sous-sections → sections principales
 const sectionMap = {
     "potentiometrie": "electrochimie",
+
     "iE_eau_pH": "potentiometrie",
+    "dosage_potentio_nul": "potentiometrie",
+    "surtensions_electrodes": "potentiometrie",
+    "diffusion_limite": "potentiometrie",
+    "dosage_fe_mno4_courant": "potentiometrie",
 
     "video_viscosite": "videos",
     "video_tension": "videos"
 };
 
 
+/* =========================
+   UTILITAIRES MENU
+   ========================= */
+
+// 🔹 Ferme tous les sous-menus
 function closeAllSubmenus() {
     document.querySelectorAll(".submenu").forEach(menu => {
         menu.classList.remove("open");
     });
 }
 
+
+/* =========================
+   NAVIGATION PRINCIPALE
+   ========================= */
+
+// 🔹 Ouvre une section principale + affiche son contenu
 function openSection(section) {
 
-    // 🔥 ferme tout
+    // 🔹 Ferme tous les sous-menus
     closeAllSubmenus();
 
-    // 🔥 ouvre le bon
+    // 🔹 Ouvre le sous-menu associé
     const submenu = document.getElementById("submenu-" + section);
-    if(submenu) {
-	submenu.classList.add("open");    }
+    if (submenu) submenu.classList.add("open");
 
-    // 🔥 affiche le contenu
+    // 🔹 Affiche la section
     show(section);
 }
 
+
+// 🔹 Accès direct à une simulation (depuis une carte)
 function goToSimu(section, parentSection) {
     const el = document.querySelector(`[data-section="${parentSection}"]`);
     show(section, el);
 }
 
 
+// 🔹 Toggle manuel d’un sous-menu
 function toggleSection(section) {
 
     const submenu = document.getElementById("submenu-" + section);
 
-    if(submenu.style.display === "block") {
+    if (submenu.style.display === "block") {
         submenu.style.display = "none";
     } else {
         submenu.classList.add("open");
     }
 
-    show(section); // 🔥 important
+    // 🔹 Met à jour le contenu affiché
+    show(section);
 }
 
+
+// 🔹 Navigation simple vers une section
 function go(section) {
     const el = document.querySelector(`[data-section="${section}"]`);
     show(section, el);
@@ -237,34 +324,62 @@ function go(section) {
 
 function show(section, el = null) {
 
-    // 🔥 déterminer les niveaux (UNE SEULE FOIS)
-    const subSection = sectionMap[section] || section;
-    const mainSection = sectionMap[subSection] || subSection;
+  /* =========================
+   1. DÉTERMINER LES NIVEAUX
+   ========================= */
 
-    // 🔥 ouvrir le bon menu
-    closeAllSubmenus();
-    const submenu = document.getElementById("submenu-" + mainSection);
-    if(submenu) submenu.classList.add("open");
+// 🔹 Sous-section (ex : iE_eau_pH → potentiometrie)
+const subSection = sectionMap[section] || section;
 
-    // 🔥 reset
-    document.querySelectorAll(".sidebar a").forEach(link => {
-        link.classList.remove("active");
-    });
+// 🔹 Section principale (ex : potentiometrie → electrochimie)
+const mainSection = sectionMap[subSection] || subSection;
 
-    // 🔥 activer section principale
-    const mainBtn = document.querySelector(`.sidebar a[data-section="${mainSection}"]`);
-    if(mainBtn) mainBtn.classList.add("active");
 
-// 🔥 activer sous-section
-if(el) {
-    el.classList.add("active");
-} else {
-    const subBtn = document.querySelector(`.submenu a[data-section="${subSection}"]`);
-    if(subBtn) subBtn.classList.add("active");
+/* =========================
+   2. GESTION DU MENU
+   ========================= */
+
+// 🔹 Ferme tous les sous-menus
+closeAllSubmenus();
+
+// 🔹 Ouvre le sous-menu correspondant
+const submenu = document.getElementById("submenu-" + mainSection);
+if (submenu) submenu.classList.add("open");
+
+// 🔹 Désactive tous les liens du menu
+document.querySelectorAll(".sidebar a").forEach(link => {
+    link.classList.remove("active");
+});
+
+// 🔹 Active la section principale
+const mainBtn = document.querySelector(
+    `.sidebar a[data-section="${mainSection}"]`
+);
+
+if (mainBtn) {
+    mainBtn.classList.add("active");
 }
 
-    let html = "";
+// 🔹 Active aussi la sous-section
+const subBtn = document.querySelector(
+    `.submenu a[data-section="${subSection}"]`
+);
 
+if (subBtn) {
+    subBtn.classList.add("active");
+}
+
+// 🔹 Si un bouton spécifique est fourni
+if (el) {
+    el.classList.add("active");
+}
+
+
+/* =========================
+   3. PRÉPARATION DU CONTENU
+   ========================= */
+
+let html = "";
 
 if(section === "contact") {
 
@@ -289,103 +404,437 @@ if(section === "contact") {
     `;
 }
 
-    /* ACCUEIL */
-    if(section === "accueil") {
-        html = `
-        <h2>Bienvenue</h2>
+/* =========================
+   SECTION : ACCUEIL
+   ========================= */
 
-        <p>
+if(section === "accueil") {
+
+    // 🔹 Contenu HTML affiché dans la zone principale
+    html = `
+
+    <!-- Titre principal de la page -->
+    <h2>Bienvenue</h2>
+
+    <!-- Description générale du site -->
+    <p>
         Ce site propose des simulations interactives en mathématiques,
         physique et chimie.
-        </p>
+    </p>
 
-        <p style="color:#777; font-size:14px;">
+    <!-- Public cible (affiché en plus discret) -->
+    <p style="color:#777; font-size:14px;">
         BTS • IUT • Lycée professionnel
-        </p>
+    </p>
 
-        <p>
+    <!-- Instruction utilisateur -->
+    <p>
         Sélectionnez une catégorie dans le menu de gauche.
-        </p>
-        `;
-    }
+    </p>
 
-    /* ELECTROCHIMIE */
-   if(section === "electrochimie") {
+    `;
+}
+
+/* =========================
+   SECTION : ELECTROCHIMIE
+   ========================= */
+
+if(section === "electrochimie") {
+
+    // 🔹 Contenu HTML injecté dans la page
     html = `
+
+    <!-- Titre de la section -->
     <h2>Electrochimie</h2>
 
-<div class='card' onclick="go('potentiometrie')">
-    <strong>Potentiométrie</strong><br>
+    <!-- Carte permettant d'accéder à la sous-section "potentiométrie" -->
+    <div class='card bleu' onclick="go('potentiometrie')">
 
-    <span style="font-size:13px; color:#666;">
-        Étude des courbes i = f(E) et des phénomènes électrochimiques associés
-    </span>
+        <!-- Titre de la carte -->
+        <strong>Potentiométrie</strong><br>
 
-    <br><br>
+        <!-- Description courte (niveau compréhension) -->
+        <span style="font-size:13px; color:#666;">
+            Étude des courbes i = f(E) et des phénomènes électrochimiques associés
+        </span>
 
-    <span style="font-size:12px; color:#888;">
-        Stabilité de l'eau • Surtensions • Courants limites • Dosage Fe²⁺
-    </span>
-</div>
+        <br><br>
+
+        <!-- Mots-clés (niveau technique / résumé rapide) -->
+        <span style="font-size:12px; color:#888;">
+            Stabilité de l'eau • Surtensions • Courants limites • Dosage Fe²⁺
+        </span>
+
+    </div>
     `;
 }
+
+/* =========================
+   SECTION : POTENTIOMÉTRIE
+   ========================= */
 
 if(section === "potentiometrie") {
+
+    // 🔹 Contenu HTML de la page
     html = `
+
+    <!-- Titre de la section -->
     <h2>Potentiométrie</h2>
 
-<div class='card' onclick="show('iE_eau_pH')">
-    <strong>Courbes i = f(E) de l’eau</strong><br>
 
+    <!-- =========================
+         CARTE 1 : Domaine de stabilité de l'eau
+         ========================= -->
+    <div class='card bleu' onclick="show('iE_eau_pH')">
+
+        <!-- Titre -->
+        <strong>
+            Courbes i = f(E) <br>
+            domaine de stabilité de l'eau
+        </strong><br>
+
+        <!-- Description -->
+        <span style="font-size:13px; color:#666;">
+            Influence du pH sur les potentiels limites anodique et cathodique
+        </span>
+
+        <br><br>
+
+        <!-- Mots-clés -->
+        <span style="font-size:12px; color:#888;">
+            Nernst • Surtensions • Domaine de stabilité • pH
+        </span>
+    </div>
+
+
+    <!-- =========================
+         CARTE 2 : Surtensions électrodes
+         ========================= -->
+    <div class='card avenir' onclick="show('surtensions_electrodes')">
+
+        <!-- Titre -->
+        <strong>
+            Electrodes et surtensions
+        </strong><br>
+
+        <!-- Description -->
+        <span style="font-size:13px; color:#666;">
+            Comparaison Pt / Inox / Charbon
+        </span>
+
+        <br><br>
+
+        <!-- Mots-clés -->
+        <span style="font-size:12px; color:#888;">
+            Platine • Inox • Cinétique • Activation
+        </span>
+    </div>
+
+
+    <!-- =========================
+         CARTE 3 : Courant limite
+         ========================= -->
+    <div class='card avenir' onclick="show('diffusion_limite')">
+
+        <!-- Titre -->
+        <strong>
+            Courant limite de diffusion
+        </strong><br>
+
+        <!-- Description -->
+        <span style="font-size:13px; color:#666;">
+            Visualisation du courant limite imposé par la diffusion
+        </span>
+
+        <br><br>
+
+        <!-- Mots-clés -->
+        <span style="font-size:12px; color:#888;">
+            Diffusion • Loi de Fick • Couche de Nernst • i<sub>lim</sub>
+        </span>
+    </div>
+
+
+    <!-- =========================
+         CARTE 4 : Dosage (courant nul)
+         ========================= -->
+    <div class='card violet' onclick="show('dosage_potentio_nul')">
+
+        <!-- Titre -->
+        <strong>
+            Dosage Fe²⁺ par MnO₄⁻ <br>
+            potentiométrie à courant nul
+        </strong><br>
+
+        <!-- Description -->
+        <span style="font-size:13px; color:#666;">
+            Suivi du potentiel d'équilibre en fonction du volume ajouté
+        </span>
+
+        <br><br>
+
+        <!-- Mots-clés -->
+        <span style="font-size:12px; color:#888;">
+            Équivalence • Courbe E = f(V) • Oxydoréduction
+        </span>
+    </div>
+
+
+    <!-- =========================
+         CARTE 5 : Dosage (courant imposé)
+         ========================= -->
+    <div class='card avenir' onclick="show('dosage_fe_mno4_courant')">
+
+        <!-- Titre -->
+        <strong>
+            Dosage Fe²⁺ / MnO₄⁻ <br>
+            courant imposé
+        </strong><br>
+
+        <!-- Description -->
+        <span style="font-size:13px; color:#666;">
+            Courant constant • Évolution du potentiel
+        </span>
+
+        <br><br>
+
+        <!-- Mots-clés -->
+        <span style="font-size:12px; color:#888;">
+            E = f(t) • Équivalence • Rupture de pente
+        </span>
+    </div>
+
+    `;
+}
+
+
+/* =========================
+   SIMULATION : i = f(E) de l’eau
+   ========================= */
+
+if (section === "iE_eau_pH") {
+
+    // 🔹 Chargement de la simulation via iframe
+    document.getElementById("content").innerHTML = `
+        <iframe src="iE_eau_pH.html"
+                style="width:100%; height:100%; border:none;">
+        </iframe>
+    `;
+
+    return; // 🔥 stop ici (pas de html classique)
+}
+
+
+if (section === "dosage_potentio_nul") {
+    console.log("Chargement dosage_potentio_nul"); // 👈 debug
+
+    document.getElementById("content").innerHTML = `
+        <iframe src="dosage_potentio_nul.html"
+                style="width:100%; height:100%; border:none;">
+        </iframe>
+    `;
+
+    return;
+}
+
+
+
+/* =========================
+   SECTION : SURTENSIONS ÉLECTRODES
+   ========================= */
+
+if (section === "surtensions_electrodes") {
+
+    html = `
+
+    <!-- Titre -->
+    <h2>Influence des électrodes</h2>
+
+    <!-- Contenu temporaire -->
+    <p>Simulation à venir...</p>
+
+    `;
+}
+
+
+/* =========================
+   SECTION : DIFFUSION LIMITE
+   ========================= */
+
+if (section === "diffusion_limite") {
+
+    html = `
+
+    <!-- Titre -->
+    <h2>Courant limite de diffusion</h2>
+
+    <!-- Contenu temporaire -->
+    <p>Simulation à venir...</p>
+
+    `;
+}
+
+
+/* =========================
+   SECTION : DOSAGE Fe²⁺ / MnO₄⁻ (courant imposé)
+   ========================= */
+
+if (section === "dosage_fe_mno4_courant") {
+
+    html = `
+
+    <!-- Titre -->
+    <h2>Dosage Fe²⁺ par MnO₄⁻</h2>
+
+    <!-- Contenu temporaire -->
+    <p>Simulation à venir...</p>
+
+    `;
+}
+/* =========================
+   SECTION : VIDÉOS DE TP
+   ========================= */
+
+if (section === "videos") {
+
+    // 🔹 Contenu HTML injecté dans la zone principale
+    html = `
+
+    <!-- Titre de la section -->
+    <h2>Vidéos de TP</h2>
+
+<!-- =========================
+     CARTE : Viscosité
+     ========================= -->
+<div class='card avenir' onclick="show('video_viscosite')">
+
+    <!-- Titre -->
+    <strong>
+        Viscosité <br>
+        chute de bille
+    </strong><br>
+
+    <!-- Description -->
     <span style="font-size:13px; color:#666;">
-        Visualiser l’effet du pH sur les potentiels et la fenêtre électrochimique
+        Détermination de la viscosité d’un fluide par mesure de vitesse limite
     </span>
 
     <br><br>
 
+    <!-- Mots-clés -->
     <span style="font-size:12px; color:#888;">
-        Nernst • Surtensions • Domaine de stabilité
+        Loi de Stokes • Vitesse limite • Forces de frottement • Reynolds
     </span>
+
 </div>
+
+<!-- =========================
+     CARTE : Tension superficielle
+     ========================= -->
+<div class='card avenir' onclick="show('video_tension')">
+
+    <!-- Titre -->
+    <strong>
+        Tension superficielle <br>
+        anneau de Du Noüy
+    </strong><br>
+
+    <!-- Description -->
+    <span style="font-size:13px; color:#666;">
+        Mesure de la tension superficielle d’un liquide par arrachement d’un anneau
+    </span>
+
+    <br><br>
+
+    <!-- Mots-clés -->
+    <span style="font-size:12px; color:#888;">
+        Forces interfaciales • Mouillage • Capillarité • Du Noüy
+    </span>
+
+</div>
+
     `;
 }
 
-    /* PAGE SIMU */
-    if(section === "iE_eau_pH") {
-        document.getElementById("content").innerHTML = `
-            <iframe src="iE_eau_pH.html"
-                    style="width:100%; height:100%; border:none;">
-            </iframe>
-        `;
-        return;
-    }
+/* =========================
+   SECTION : VIDEO VISCOSITÉ
+   ========================= */
 
-    /* VIDEOS */
-   if(section === "videos") {
+if (section === "video_viscosite") {
+
     html = `
-    <h2>Vidéos de TP</h2>
 
-    <div class='card'>
-        Viscosité
-    </div>
+    <h2>
+        Viscosité – chute de bille
+    </h2>
 
-    <div class='card'>
-        Tension superficielle
-    </div>
+    <p>
+        Vidéo à venir...
+    </p>
 
-   `;
+    `;
 }
 
-    /* MATHS */
-    if(section === "maths") {
-        html = `
-        <h2>Mathématiques</h2>
 
-        <div class='card'>
-            À venir
-        </div>
-        `;
-    }
+/* =========================
+   SECTION : VIDEO TENSION
+   ========================= */
+
+if (section === "video_tension") {
+
+    html = `
+
+    <h2>
+        Tension superficielle – anneau de Du Noüy
+    </h2>
+
+    <p>
+        Vidéo à venir...
+    </p>
+
+    `;
+}
+
+/* =========================
+   SECTION : MATHÉMATIQUES
+   ========================= */
+
+if (section === "maths") {
+
+    // 🔹 Contenu HTML de la section
+    html = `
+
+    <!-- Titre de la section -->
+    <h2>Mathématiques</h2>
+
+<!-- =========================
+     CARTE : Brachistochrone
+     ========================= -->
+<div class='card avenir' onclick="show('brachistochrone')">
+
+    <!-- Titre -->
+    <strong>
+        Problème de la <br>
+        brachistochrone
+    </strong><br>
+
+    <!-- Description -->
+    <span style="font-size:13px; color:#666;">
+        Recherche de la courbe de descente la plus rapide sous l’effet de la gravité
+    </span>
+
+    <br><br>
+
+    <!-- Mots-clés -->
+    <span style="font-size:12px; color:#888;">
+        Cycloïde • Temps minimal • Gravitation • Calcul variationnel
+    </span>
+
+</div>
+
+    `;
+}
+
 
     document.getElementById("content").innerHTML = html;
 }
